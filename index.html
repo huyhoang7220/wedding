@@ -1,0 +1,2971 @@
+<!DOCTYPE html>
+<html lang="vi" class="no-js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#F4F1EA" />
+<meta name="description" content="A private wedding invitation — 06.12.2026" />
+<meta name="robots" content="noindex, nofollow" />
+<title>06.12.2026 — A Private Invitation</title>
+
+<!-- =========================
+     FONTS
+========================= -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet" />
+
+<!-- =========================
+     LIBRARIES (CDN)
+========================= -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+  /* Tailwind is used only for layout utilities; the design language lives in the CSS below.
+     Guarded: nếu CDN lỗi, trang vẫn chạy bình thường thay vì ném ReferenceError. */
+  if (typeof tailwind !== "undefined") tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          sage:       '#7A8B7B',
+          cream:      '#F4F1EA',
+          charcoal:   '#2C302E',
+          ivory:      '#FAF8F2',
+          stone:      '#D8D4CA',
+          mutedsage:  '#AAB4A8',
+          champagne:  '#C8B89A',
+          deepsage:   '#56665A'
+        },
+        fontFamily: {
+          display: ['"Playfair Display"', 'Georgia', 'serif'],
+          sans:    ['Inter', 'system-ui', 'sans-serif'],
+          hand:    ['Caveat', 'cursive']
+        }
+      }
+    }
+  };
+  document.documentElement.classList.remove('no-js');
+</script>
+
+<!-- =========================
+     DESIGN SYSTEM / CSS
+========================= -->
+<style>
+/* ---------- 01. TOKENS ---------- */
+:root{
+  --sage:#7A8B7B;
+  --cream:#F4F1EA;
+  --charcoal:#2C302E;
+  --ivory:#FAF8F2;
+  --stone:#D8D4CA;
+  --muted-sage:#AAB4A8;
+  --champagne:#C8B89A;
+  --deep-sage:#56665A;
+  --paper:#F1EDE4;
+  --line:rgba(44,48,46,.30);
+  --line-soft:rgba(44,48,46,.18);
+  /* Màu chữ dùng mã màu đặc (không dùng alpha) để nét chữ luôn dày và rõ.
+     Đo trên nền --cream: body 11.9:1 · mid 8.4:1 · soft 5.6:1 — đều vượt AA. */
+  --ink-body:#2C302E;
+  --ink-mid:#414643;
+  --ink-soft:#5C625E;
+  --ink-60:#2C302E;
+  --ink-45:#414643;
+  --ink-30:#5C625E;
+
+  --pad:clamp(20px,5vw,72px);
+  --maxw:1560px;
+
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-soft:cubic-bezier(.4,0,.2,1);
+  --dur:1.05s;
+
+  --shadow-soft:0 24px 60px -30px rgba(44,48,46,.28);
+  --shadow-lift:0 40px 90px -40px rgba(44,48,46,.38);
+
+  /* Lớp màu nền giấy + lớp phủ ảnh — thay theo bên nhà trai / nhà gái */
+  --wash-a:rgba(200,184,154,.16);
+  --wash-b:rgba(122,139,123,.12);
+  --photo-a:rgba(200,184,154,.10);
+  --photo-b:rgba(122,139,123,.10);
+  --scrim-1:rgba(244,241,234,.80);
+  --scrim-2:rgba(244,241,234,.42);
+  --scrim-3:rgba(244,241,234,.72);
+  --scrim-4:rgba(244,241,234,.97);
+}
+
+/* Nhà trai — xanh nước biển pastel */
+:root[data-side="groom"]{
+  --cream:#EFF4F8; --ivory:#F7FAFC; --paper:#E7EEF4; --stone:#D2DEE7;
+  --sage:#7C99B4; --deep-sage:#42627F; --muted-sage:#A6BCCE; --champagne:#A7C3DA;
+  --wash-a:rgba(124,153,180,.20); --wash-b:rgba(66,98,127,.13);
+  --photo-a:rgba(124,153,180,.13); --photo-b:rgba(66,98,127,.10);
+  --scrim-1:rgba(239,244,248,.82); --scrim-2:rgba(239,244,248,.44);
+  --scrim-3:rgba(239,244,248,.74); --scrim-4:rgba(239,244,248,.97);
+}
+
+/* Nhà gái — hồng pastel */
+:root[data-side="bride"]{
+  --cream:#FAF2F3; --ivory:#FDF8F9; --paper:#F5E9EB; --stone:#E7D5D9;
+  --sage:#BC8B94; --deep-sage:#8A555F; --muted-sage:#D9B7BD; --champagne:#E0B4BC;
+  --wash-a:rgba(188,139,148,.18); --wash-b:rgba(138,85,95,.12);
+  --photo-a:rgba(188,139,148,.13); --photo-b:rgba(138,85,95,.09);
+  --scrim-1:rgba(250,242,243,.82); --scrim-2:rgba(250,242,243,.44);
+  --scrim-3:rgba(250,242,243,.74); --scrim-4:rgba(250,242,243,.97);
+}
+html,body{transition:background-color .9s var(--ease)}
+
+/* ---------- 02. RESET / BASE ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--charcoal);
+  font-family:Inter,system-ui,sans-serif;
+  font-weight:400;
+  font-size:17px;
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-wrap:break-word;
+}
+body.is-locked{overflow:hidden;height:100vh}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--champagne);color:var(--charcoal)}
+
+/* Focus — visible but editorial */
+:focus{outline:none}
+:focus-visible{outline:1px solid var(--deep-sage);outline-offset:4px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:var(--cream)}
+::-webkit-scrollbar-thumb{background:var(--stone);border:3px solid var(--cream)}
+::-webkit-scrollbar-thumb:hover{background:var(--muted-sage)}
+
+/* ---------- 03. PAPER + GRAIN ---------- */
+.paper-bg{
+  background-color:var(--cream);
+  background-image:
+    radial-gradient(120% 80% at 12% 0%,var(--wash-a) 0%,transparent 55%),
+    radial-gradient(90% 70% at 100% 100%,var(--wash-b) 0%,transparent 60%);
+}
+/* Lớp phủ grain: clip trong khung viewport để không bao giờ tạo scroll ngang */
+.grain{
+  pointer-events:none;
+  position:fixed;
+  inset:0;
+  z-index:9000;
+  overflow:hidden;
+  opacity:.42;
+  mix-blend-mode:multiply;
+}
+.grain::after{
+  content:"";
+  position:absolute;
+  inset:-150%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+  animation:grainShift 8s steps(6) infinite;
+  will-change:transform;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0)}    16%{transform:translate(-4%,-3%)}
+  33%{transform:translate(3%,-5%)} 50%{transform:translate(-3%,4%)}
+  66%{transform:translate(4%,3%)}  83%{transform:translate(-5%,-2%)}
+  100%{transform:translate(0,0)}
+}
+.vignette::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:8500;
+  box-shadow:inset 0 0 220px rgba(44,48,46,.10);
+}
+
+/* ---------- 04. TYPOGRAPHY ---------- */
+/* Tên/token dài (vd. [BRIDE_NAME]) không được phép làm vỡ grid */
+.display-xl,.display-l,.display-m,.serif-lead,.tl__time{overflow-wrap:anywhere}
+.font-display{font-family:"Playfair Display",Georgia,serif}
+.font-hand{font-family:Caveat,cursive;font-weight:600}
+
+.eyebrow{
+  font-size:clamp(11.5px,2.2vw,12.5px);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-weight:700;
+  color:var(--ink-mid);
+  line-height:1.5;
+}
+.eyebrow--sage{color:var(--deep-sage)}
+.meta{
+  font-size:clamp(11.5px,2.1vw,13px);
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-mid);
+  font-weight:600;
+}
+.display-xl{
+  font-family:"Playfair Display",Georgia,serif;
+  font-weight:500;
+  font-size:clamp(2.5rem,10.2vw,7.2rem);
+  line-height:1.02;                /* Playfair + dấu phụ tiếng Việt cần thoáng hơn */
+  letter-spacing:-.012em;
+}
+.display-l{
+  font-family:"Playfair Display",Georgia,serif;
+  font-weight:600;
+  font-size:clamp(1.95rem,5vw,3.8rem);
+  line-height:1.12;
+  letter-spacing:-.008em;
+}
+.display-m{
+  font-family:"Playfair Display",Georgia,serif;
+  font-weight:300;
+  font-size:clamp(1.6rem,3.8vw,2.6rem);
+  font-weight:600;
+  line-height:1.22;
+  letter-spacing:-.005em;
+}
+.serif-lead{
+  font-family:"Playfair Display",Georgia,serif;
+  font-weight:500;
+  font-size:clamp(1.1rem,3.1vw,1.65rem);
+  line-height:1.55;
+  color:var(--ink-body);
+}
+.body-sm{font-size:clamp(14.5px,2.9vw,16px);line-height:1.75;font-weight:400;color:var(--ink-body)}
+.italic-note{font-style:italic;font-family:"Playfair Display",Georgia,serif}
+.tnum{font-variant-numeric:lining-nums tabular-nums;font-feature-settings:"lnum" 1,"tnum" 1}
+
+/* Vertical / rotated editorial labels */
+.vertical-label{
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--ink-soft);
+}
+.rot-label{transform:rotate(-90deg);transform-origin:left top;white-space:nowrap}
+
+/* ---------- 05. LAYOUT ---------- */
+.shell{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--pad)}
+.rule{height:1px;background:var(--line);width:100%}
+.rule-soft{height:1px;background:var(--line-soft);width:100%}
+.section{position:relative;padding-block:clamp(88px,15vw,190px)}
+.hairline-top{border-top:1px solid var(--line)}
+
+/* ---------- 06. REVEAL ANIMATION ---------- */
+[data-rv]{will-change:transform,opacity}
+[data-rv="up"]{opacity:0;transform:translate3d(0,34px,0);transition:opacity 1s var(--ease),transform 1.15s var(--ease)}
+[data-rv="fade"]{opacity:0;transition:opacity 1.3s var(--ease)}
+/* Lưu ý: trạng thái ẩn KHÔNG được làm sập hộp của phần tử (clip-path / scale 0),
+   vì IntersectionObserver tính theo hình học đã clip → callback sẽ không bao giờ chạy.
+   Hiệu ứng mask thật sự do .split-line (overflow:hidden) và ::after đảm nhiệm. */
+[data-rv="mask"]{opacity:0;transform:translate3d(0,20px,0);transition:opacity 1s var(--ease),transform 1.25s var(--ease)}
+[data-rv="line"],[data-rv="lineY"]{position:relative;background:transparent;overflow:hidden}
+[data-rv="line"]::after,[data-rv="lineY"]::after{
+  content:"";position:absolute;inset:0;background:var(--line);
+  transform:scaleX(0);transform-origin:left center;transition:transform 1.5s var(--ease);
+}
+[data-rv="lineY"]::after{transform:scaleY(0);transform-origin:top center;transition:transform 1.6s var(--ease)}
+[data-rv="line"].rv-in::after,[data-rv="lineY"].rv-in::after{transform:scaleX(1) scaleY(1)}
+[data-rv].rv-in{opacity:1;transform:translate3d(0,0,0)}
+
+/* Char / word split reveal */
+.split-line{display:block;overflow:hidden;padding-bottom:.16em;margin-bottom:-.10em}
+.split-unit{
+  display:inline-block;
+  transform:translate3d(0,110%,0) rotate(3deg);
+  opacity:.001;
+  transition:transform 1.15s var(--ease),opacity .8s var(--ease);
+}
+.rv-in .split-unit,.split-in .split-unit{transform:translate3d(0,0,0) rotate(0);opacity:1}
+
+/* Image reveal frame */
+.img-frame{position:relative;overflow:hidden;background:var(--paper)}
+.img-frame img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.14);
+  transition:transform 1.8s var(--ease),filter 1.2s var(--ease);
+  filter:grayscale(.42) sepia(.13) contrast(1.03) brightness(1.02);
+}
+.img-frame.rv-in img,.rv-in .img-frame img{transform:scale(1)}
+.img-frame::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,var(--photo-a),var(--photo-b));
+  mix-blend-mode:multiply;
+}
+.img-frame .veil{
+  position:absolute;inset:0;background:var(--cream);transform-origin:top;
+  transform:scaleY(1);transition:transform 1.4s var(--ease);z-index:2;
+}
+.img-frame.rv-in .veil,.rv-in .img-frame .veil{transform:scaleY(0);transform-origin:bottom}
+@media (hover:hover){
+  .img-hover:hover img{transform:scale(1.055);filter:grayscale(.18) sepia(.08) contrast(1.05)}
+}
+
+/* ---------- 07. MARQUEE ---------- */
+.marquee{overflow:hidden;white-space:nowrap;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.marquee__track{display:inline-flex;gap:0;animation:marquee 42s linear infinite;will-change:transform}
+.marquee__track span{padding-inline:.4em}
+@keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+.marquee--slow .marquee__track{animation-duration:70s}
+.marquee--rev .marquee__track{animation-direction:reverse}
+
+/* ---------- 08. BUTTONS / LINKS ---------- */
+.btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.9em;
+  padding:16px 34px;min-height:52px;
+  font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  border:1.5px solid var(--charcoal);color:var(--charcoal);
+  background:transparent;overflow:hidden;isolation:isolate;
+  transition:color .55s var(--ease),border-color .55s var(--ease),opacity .3s;
+}
+.btn::before{
+  content:"";position:absolute;inset:0;z-index:-1;background:var(--charcoal);
+  transform:translate3d(0,101%,0);transition:transform .62s var(--ease);
+}
+.btn:hover::before,.btn:focus-visible::before{transform:translate3d(0,0,0)}
+.btn:hover,.btn:focus-visible{color:var(--ivory)}
+.btn--sage{border-color:var(--deep-sage);color:var(--deep-sage)}
+.btn--sage::before{background:var(--deep-sage)}
+.btn--ghost{border-color:var(--line)}
+.btn[disabled],.btn.is-disabled{
+  cursor:not-allowed;opacity:1;
+  border-color:#9AA09B;color:#4A4F4C;
+  background:rgba(216,212,202,.5);
+}
+.btn[disabled]::before,.btn.is-disabled::before{display:none}
+.link-underline{
+  position:relative;display:inline-block;padding-bottom:3px;
+}
+.link-underline::after{
+  content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:currentColor;
+  transform:scaleX(0);transform-origin:right;transition:transform .6s var(--ease);
+}
+.link-underline:hover::after{transform:scaleX(1);transform-origin:left}
+
+/* ---------- 09. FORM (luxury stationery) ---------- */
+.field{position:relative;padding-top:26px}
+.field__label{
+  position:absolute;top:0;left:0;
+  font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-mid);font-weight:700;
+  transition:color .4s var(--ease);
+}
+.field__input{
+  width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);
+  padding:10px 0 14px;font-size:clamp(17px,4vw,21px);font-weight:500;letter-spacing:.01em;
+  font-family:"Playfair Display",Georgia,serif;
+  transition:border-color .5s var(--ease);
+}
+.field__input::placeholder{color:#7C827E;font-style:italic;font-weight:400}
+.field__line{
+  position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--deep-sage);
+  transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease);
+}
+.field__input:focus ~ .field__line{transform:scaleX(1)}
+.field__input:focus ~ .field__label,.field.is-filled .field__label{color:var(--deep-sage)}
+.field.has-error .field__input{border-bottom-color:#A2604F}
+.field__error{
+  display:block;min-height:16px;margin-top:8px;
+  font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8E4534;font-weight:600;
+  opacity:0;transform:translateY(-4px);transition:opacity .4s,transform .4s;
+}
+.field.has-error .field__error{opacity:1;transform:translateY(0)}
+input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:background-color 9999s}
+
+/* Shake */
+@keyframes shake{
+  10%,90%{transform:translate3d(-1px,0,0)}
+  20%,80%{transform:translate3d(2px,0,0)}
+  30%,50%,70%{transform:translate3d(-4px,0,0)}
+  40%,60%{transform:translate3d(4px,0,0)}
+}
+.shake{animation:shake .58s cubic-bezier(.36,.07,.19,.97) both}
+
+/* ---------- 10. LOCK SCREEN ---------- */
+#lockscreen{
+  position:fixed;inset:0;z-index:9500;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--charcoal);
+  color:var(--ivory);
+  overflow:hidden;
+  transition:opacity 1.15s var(--ease),visibility 1.15s;
+}
+#lockscreen.is-open{opacity:0;visibility:hidden;pointer-events:none}
+.lock-bgtype{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:2.5vh;
+  opacity:.038;pointer-events:none;user-select:none;
+  -webkit-mask-image:radial-gradient(58% 42% at 50% 47%,transparent 0%,transparent 42%,#000 100%);
+  mask-image:radial-gradient(58% 42% at 50% 47%,transparent 0%,transparent 42%,#000 100%);
+}
+.lock-bgtype .marquee__track{
+  font-family:"Playfair Display",Georgia,serif;
+  font-size:clamp(4rem,13vw,11rem);line-height:.9;font-weight:300;text-transform:uppercase;
+  color:var(--ivory);
+}
+.lock-spot{
+  position:absolute;left:50%;top:44%;width:min(120vw,1100px);aspect-ratio:1;
+  transform:translate(-50%,-50%);pointer-events:none;
+  background:radial-gradient(circle,rgba(200,184,154,.22) 0%,rgba(200,184,154,.06) 34%,rgba(200,184,154,0) 66%);
+  animation:breathe 9s var(--ease-soft) infinite;
+}
+@keyframes breathe{0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}}
+.lock-card{position:relative;z-index:3;width:100%;max-width:520px;padding-inline:26px;text-align:center}
+
+/* Chữ lồng H&L — ảnh nền trong suốt, thả bóng nhẹ cho nổi trên nền tối */
+.lock-monogram{
+  display:block;margin:0 auto;
+  width:min(300px,62vw);height:auto;
+  filter:drop-shadow(0 6px 26px rgba(200,184,154,.30));
+  animation:monoGlow 7.5s var(--ease-soft) infinite;
+}
+@keyframes monoGlow{
+  0%,100%{filter:drop-shadow(0 6px 26px rgba(200,184,154,.24))}
+  50%    {filter:drop-shadow(0 6px 34px rgba(200,184,154,.44))}
+}
+@media (prefers-reduced-motion:reduce){ .lock-monogram{animation:none} }
+.lock-mono{
+  font-family:"Playfair Display",Georgia,serif;font-weight:600;
+  font-size:clamp(3.2rem,15vw,6.4rem);line-height:1.06;letter-spacing:.02em;
+  background:linear-gradient(103deg,#EDE4D2 0%,#C8B89A 24%,#F6F1E6 44%,#B9A98C 62%,#E9DFCB 84%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:sheen 7.5s var(--ease-soft) infinite;
+}
+@keyframes sheen{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.lock-amp{
+  display:inline-block;font-style:italic;font-size:.42em;vertical-align:middle;
+  padding-inline:.22em;color:var(--champagne);-webkit-text-fill-color:var(--champagne);
+}
+#lockscreen .field__label{color:rgba(250,248,242,.72)}
+#lockscreen .field__input{color:var(--ivory);border-bottom-color:rgba(250,248,242,.38);text-align:center;letter-spacing:.18em;font-family:Inter,sans-serif;font-size:16px;font-weight:500}
+#lockscreen .field__input::placeholder{color:rgba(250,248,242,.55);letter-spacing:.18em;font-style:normal;font-weight:400}
+#lockscreen .field__line{background:var(--champagne)}
+#lockscreen .btn{border-color:rgba(250,248,242,.55);color:var(--ivory)}
+#lockscreen .btn::before{background:var(--champagne)}
+#lockscreen .btn:hover,#lockscreen .btn:focus-visible{color:var(--charcoal);border-color:var(--champagne)}
+.lock-err{
+  min-height:18px;margin-top:14px;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#EBB49E;font-weight:500;
+  opacity:0;transition:opacity .4s;
+}
+.lock-err.is-on{opacity:1}
+.lock-enter{opacity:0;transform:translateY(18px);animation:lockIn 1.2s var(--ease) forwards}
+.lock-enter--1{animation-delay:.15s}
+.lock-enter--2{animation-delay:.32s}
+.lock-enter--3{animation-delay:.5s}
+.lock-enter--4{animation-delay:.66s}
+.lock-enter--5{animation-delay:.8s}
+@keyframes lockIn{to{opacity:1;transform:translateY(0)}}
+
+/* ---------- 11. LANGUAGE SWITCH ---------- */
+.lang{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:500;letter-spacing:.16em}
+.lang__btn{
+  padding:8px 11px;min-width:44px;color:currentColor;opacity:.6;
+  transition:opacity .4s var(--ease);position:relative;
+}
+.lang__btn::after{
+  content:"";position:absolute;left:10px;right:10px;bottom:3px;height:1px;background:currentColor;
+  transform:scaleX(0);transform-origin:center;transition:transform .5s var(--ease);
+}
+.lang__btn.is-active{opacity:1}
+.lang__btn.is-active::after{transform:scaleX(1)}
+.lang__sep{opacity:.28}
+
+/* ---------- 12. HEADER ---------- */
+.site-header{
+  position:fixed;top:0;left:0;right:0;z-index:600;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:clamp(14px,2.4vw,26px) var(--pad);
+  transition:transform .7s var(--ease),box-shadow .5s var(--ease);
+  transform:translateY(-102%);
+  /* Header luôn đặc, không tự ẩn — đọc rõ trên mọi nền ảnh */
+  background:var(--cream);
+  border-bottom:1px solid var(--line-soft);
+}
+.site-header.is-ready{transform:translateY(0)}
+.site-header.is-solid{box-shadow:0 6px 22px -20px rgba(44,48,46,.55)}
+.header-mono{font-family:"Playfair Display",Georgia,serif;font-size:20px;font-weight:700;letter-spacing:.1em}
+.header-mono em{font-style:italic;color:var(--champagne);padding-inline:.15em}
+
+/* ---------- 13. HERO ---------- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.hero__media{position:absolute;inset:0;z-index:0}
+.hero__media img{width:100%;height:100%;object-fit:cover;filter:grayscale(.5) sepia(.16) contrast(1.04) brightness(1.03)}
+.hero__scrim{position:absolute;inset:0;background:
+  linear-gradient(180deg,var(--scrim-1) 0%,var(--scrim-2) 24%,var(--scrim-3) 58%,var(--scrim-4) 100%);}
+.hero__float{
+  position:absolute;z-index:1;pointer-events:none;user-select:none;
+  font-family:"Playfair Display",Georgia,serif;font-weight:300;
+  color:rgba(44,48,46,.062);text-transform:uppercase;line-height:.82;
+}
+.hero__inner{position:relative;z-index:2;width:100%}
+.hero__date{display:flex;align-items:flex-end;gap:clamp(10px,2vw,22px)}
+.hero__num{
+  font-family:"Playfair Display",Georgia,serif;font-weight:300;
+  font-size:clamp(2.5rem,7.8vw,5.4rem);line-height:.94;letter-spacing:-.02em;font-weight:500;
+}
+/* Dòng thông tin đầu hero: điện thoại xếp dọc, canh trái cho đỡ lủng củng */
+.hero__meta{top:clamp(86px,12vh,140px)}
+.hero__meta > div{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.hero__meta .hero__meta-right{text-align:left}
+@media(min-width:768px){
+  .hero__meta > div{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:24px}
+  .hero__meta .hero__meta-right{text-align:right}
+}
+
+/* Màn hình rất nhỏ / rất thấp (iPhone SE…): nén hero để luôn vừa 1 màn */
+@media (max-width:359.98px),(max-height:679.98px){
+  .display-xl{font-size:clamp(2.2rem,9.6vw,2.9rem)}
+  .hero__num{font-size:clamp(2.1rem,7.4vw,2.9rem)}
+  .hero__meta{display:none}          /* thông tin đã có trong hàng ngày tháng bên dưới */
+  .hero .serif-lead{font-size:1rem;line-height:1.45}
+  .hero__inner .body-sm{display:none}
+  .hero__inner{padding-bottom:20px!important}
+  .section{padding-block:clamp(64px,12vw,110px)}
+}
+
+.scroll-cue{display:flex;flex-direction:column;align-items:center;gap:10px}
+.scroll-cue__line{width:1px;height:56px;background:var(--line);position:relative;overflow:hidden}
+.scroll-cue__line::after{
+  content:"";position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--deep-sage);
+  animation:cue 2.4s var(--ease) infinite;
+}
+@keyframes cue{0%{top:-100%}55%{top:100%}100%{top:100%}}
+
+/* ---------- 14. COUNTDOWN ---------- */
+.count-row{
+  display:grid;grid-template-columns:1fr;
+  border-top:1px solid var(--line);
+}
+.count-cell{
+  position:relative;display:flex;align-items:baseline;justify-content:space-between;gap:18px;
+  padding:clamp(16px,3.4vw,30px) 0;border-bottom:1px solid var(--line);
+}
+.count-num{
+  font-family:"Playfair Display",Georgia,serif;font-weight:300;
+  font-weight:500;
+  font-size:clamp(3.2rem,13.5vw,8rem);line-height:.94;letter-spacing:-.03em;
+  /* ép chữ số kiểu lining + đều bề rộng → không còn số cao số thấp */
+  font-variant-numeric:lining-nums tabular-nums;
+  font-feature-settings:"lnum" 1,"tnum" 1;
+}
+
+.count-lab{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mid);font-weight:700;text-align:right}
+@media(min-width:900px){
+  .count-row{grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--line)}
+  .count-cell{
+    flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:clamp(14px,2vw,26px);
+    padding:clamp(30px,4vw,58px) clamp(16px,2.4vw,34px);
+    border-bottom:0;border-left:1px solid var(--line);
+  }
+  .count-cell:first-child{border-left:0;padding-left:0}
+  .count-lab{text-align:left}
+}
+
+/* ---------- 15. COUPLE ---------- */
+.polaroid{
+  position:relative;background:var(--ivory);padding:14px 14px 60px;
+  box-shadow:var(--shadow-soft);
+  transition:transform 1s var(--ease),box-shadow 1s var(--ease);
+}
+.polaroid .img-frame{aspect-ratio:4/5}
+.polaroid__cap{
+  position:absolute;left:0;right:0;bottom:20px;text-align:center;
+  font-family:Caveat,cursive;font-size:24px;font-weight:600;color:var(--ink-body);
+}
+.polaroid__stamp{
+  position:absolute;top:14px;right:14px;z-index:3;
+  font-size:9.5px;letter-spacing:.14em;color:rgba(250,248,242,.96);font-weight:500;
+  border:1px solid rgba(250,248,242,.6);padding:4px 8px;
+  background:rgba(44,48,46,.55);backdrop-filter:blur(2px);
+}
+.tilt-a{transform:rotate(-2.2deg)}
+.tilt-b{transform:rotate(1.8deg)}
+@media (hover:hover){
+  .polaroid:hover{transform:rotate(0) translateY(-6px);box-shadow:var(--shadow-lift)}
+}
+.film-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-mid);font-weight:700;
+}
+.film-tag::before{content:"";width:22px;height:1px;background:var(--line)}
+
+/* ---------- 16. TIMELINE ---------- */
+.tl{position:relative;padding-left:34px}
+@media(min-width:900px){.tl{padding-left:0}}
+.tl__spine{
+  position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:var(--line);
+  transform:scaleY(0);transform-origin:top;transition:transform 1.8s var(--ease);
+}
+.tl.rv-in .tl__spine{transform:scaleY(1)}
+@media(min-width:900px){.tl__spine{left:calc(23% - .5px)}}
+.tl__item{position:relative;padding-block:clamp(28px,4.6vw,54px)}
+.tl__dot{
+  position:absolute;left:-34px;top:calc(clamp(28px,4.6vw,54px) + 10px);
+  width:13px;height:13px;border-radius:50%;border:1px solid var(--deep-sage);background:var(--cream);
+  transform:scale(0);transition:transform .8s var(--ease) .25s;
+}
+.tl__dot::after{content:"";position:absolute;inset:3.5px;border-radius:50%;background:var(--deep-sage);opacity:.55}
+.tl__item.rv-in .tl__dot{transform:scale(1)}
+@media(min-width:900px){
+  .tl__item{display:grid;grid-template-columns:23% 1fr;gap:clamp(24px,5vw,80px)}
+  .tl__dot{left:calc(23% - 6.5px)}
+}
+.tl__time{
+  font-family:"Playfair Display",Georgia,serif;font-weight:300;
+  font-weight:600;
+  font-size:clamp(1.8rem,6.2vw,3rem);line-height:1.1;letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ---------- 17. NOTICE BOX ---------- */
+.notice{
+  position:relative;border:1px solid var(--line);background:rgba(216,212,202,.34);
+  padding:clamp(20px,4vw,30px);
+}
+.notice::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--champagne);
+}
+.notice__ttl{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#3F5044;font-weight:700}
+
+/* ---------- 17b. MỪNG CƯỚI (QR) ---------- */
+.gift-card{
+  border:1px solid var(--line);background:var(--ivory);
+  padding:clamp(22px,4vw,34px) clamp(18px,3.5vw,30px);
+  text-align:center;box-shadow:var(--shadow-soft);
+}
+.gift-qr{
+  width:min(250px,64vw);aspect-ratio:1;margin:clamp(18px,4vw,26px) auto clamp(14px,3vw,20px);
+  background:#fff;border:1px solid var(--line-soft);padding:10px;
+}
+.gift-qr img{width:100%;height:100%;object-fit:contain}   /* không phủ filter film — QR phải sắc nét */
+.gift-acc{
+  font-family:"Playfair Display",Georgia,serif;font-weight:700;
+  font-size:clamp(1.35rem,5.2vw,1.85rem);letter-spacing:.06em;
+  font-variant-numeric:tabular-nums;line-height:1.25;
+}
+.gift-divider{width:34px;height:1px;background:var(--champagne);margin:clamp(14px,3vw,18px) auto}
+
+/* Tên ở footer: mỗi tên là một khối liền, chỉ xuống dòng giữa hai tên */
+.footer-names{overflow-wrap:normal}
+.footer-names > span{white-space:nowrap}
+.footer-names .amp{font-style:italic;color:var(--champagne);padding-inline:.3em;white-space:normal}
+.footer-marquee{font-family:"Playfair Display",Georgia,serif;font-weight:500;
+  font-size:clamp(1.55rem,6.4vw,3.8rem);line-height:1.1}
+
+/* Điện thoại: footer canh giữa, tên xuống đúng 2 dòng — dấu & đi cùng dòng trên */
+@media(max-width:767.98px){
+  .footer-grid{text-align:center}
+  .footer-grid > div{display:flex;flex-direction:column;align-items:center}
+  .footer-names > span[data-config]:last-of-type{display:block}
+  .footer-names .amp{padding-left:.24em;padding-right:0}
+  .footer-grid .body-sm{max-width:32ch}
+  .footer-grid .rule-soft{display:none}
+}
+@media(min-width:768px){ .gift-card.gift-solo{grid-column:4 / span 6} }
+
+/* ---------- 18. MODAL ---------- */
+.modal{
+  position:fixed;inset:0;z-index:9200;display:flex;align-items:center;justify-content:center;
+  padding:clamp(16px,4vw,40px);
+  opacity:0;visibility:hidden;transition:opacity .6s var(--ease),visibility .6s;
+}
+.modal.is-open{opacity:1;visibility:visible}
+.modal__scrim{
+  position:absolute;inset:0;background:rgba(44,48,46,.52);
+  backdrop-filter:blur(9px) saturate(.9);-webkit-backdrop-filter:blur(9px) saturate(.9);
+}
+.modal__panel{
+  position:relative;z-index:2;width:100%;max-width:560px;max-height:88svh;overflow-y:auto;
+  background:var(--ivory);border:1px solid var(--line);
+  padding:clamp(30px,7vw,64px) clamp(22px,6vw,56px);
+  box-shadow:0 60px 120px -50px rgba(44,48,46,.6);
+  transform:translateY(26px) scale(.97);opacity:0;
+  transition:transform .85s var(--ease),opacity .7s var(--ease);
+  text-align:center;
+}
+.modal.is-open .modal__panel{transform:translateY(0) scale(1);opacity:1}
+.code-plate{
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:clamp(18px,4vw,26px) 10px;margin-block:clamp(18px,4vw,28px);
+  background:linear-gradient(180deg,rgba(200,184,154,.14),rgba(200,184,154,.04));
+}
+.code-plate__val{
+  font-family:"Playfair Display",Georgia,serif;font-weight:700;
+  font-size:clamp(1.8rem,7.6vw,2.9rem);letter-spacing:.12em;line-height:1.2;
+  word-break:break-all;
+}
+.copy-chip{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border:1px solid var(--line);
+  font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-body);font-weight:700;
+  transition:border-color .4s,color .4s;
+}
+.copy-chip:hover{border-color:var(--deep-sage);color:var(--deep-sage)}
+
+/* ---------- 19. MEMORY / GALLERY ---------- */
+#memorySection{display:none}
+#memorySection.is-visible{display:block}
+.gal{display:grid;grid-template-columns:repeat(6,1fr);gap:clamp(10px,2.2vw,26px)}
+.gal__it{grid-column:span 6}
+.gal__it .img-frame{width:100%}
+.gal__cap{margin-top:12px;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+@media(min-width:760px){
+  .gal__it--a{grid-column:2/6}
+  .gal__it--b{grid-column:1/4}
+  .gal__it--c{grid-column:4/7;align-self:end}
+  .gal__it--d{grid-column:1/3}
+  .gal__it--e{grid-column:3/7}
+  .gal__it--f{grid-column:2/5}
+  .gal__it--g{grid-column:5/7;align-self:center}
+}
+.ar-4x5{aspect-ratio:4/5}
+.ar-3x2{aspect-ratio:3/2}
+.ar-1x1{aspect-ratio:1/1}
+.ar-2x3{aspect-ratio:2/3}
+.ar-16x9{aspect-ratio:16/9}
+
+/* ---------- 20. CURSOR (desktop only) ---------- */
+.cursor,.cursor-dot{position:fixed;top:0;left:0;z-index:9800;pointer-events:none;border-radius:50%;opacity:0;transition:opacity .4s}
+.cursor{width:34px;height:34px;border:1px solid rgba(44,48,46,.4);transition:opacity .4s,width .45s var(--ease),height .45s var(--ease),background-color .45s,border-color .45s}
+.cursor-dot{width:4px;height:4px;background:var(--deep-sage)}
+.cursor.is-on,.cursor-dot.is-on{opacity:1}
+.cursor.is-hover{width:62px;height:62px;background:rgba(122,139,123,.10);border-color:rgba(86,102,90,.5)}
+@media (hover:none),(pointer:coarse){.cursor,.cursor-dot{display:none!important}}
+
+/* ---------- 21. LOADER / INTRO ---------- */
+.intro-veil{
+  position:fixed;inset:0;z-index:9400;background:var(--cream);
+  transform-origin:top;pointer-events:none;
+  transition:transform 1.25s var(--ease);
+  transform:scaleY(0);
+}
+.intro-veil.is-run{transform:scaleY(0)}
+
+/* ---------- 22. UTILITIES ---------- */
+.mix-diff{mix-blend-mode:difference}
+.hide{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.no-scrollbar::-webkit-scrollbar{display:none}
+.parallax{will-change:transform}
+
+/* ---------- 23. REDUCED MOTION ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important;
+  }
+  [data-rv]{opacity:1!important;transform:none!important;clip-path:none!important}
+  .split-unit{transform:none!important;opacity:1!important}
+  .img-frame img{transform:none!important}
+  .img-frame .veil{display:none}
+  .grain::after{animation:none}
+  .cursor,.cursor-dot{display:none!important}
+}
+</style>
+</head>
+
+<body class="paper-bg vignette is-locked">
+
+<!-- Texture layers -->
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- =========================
+     LOCK SCREEN
+========================= -->
+<div id="lockscreen" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+
+  <!-- Moving background typography -->
+  <div class="lock-bgtype" aria-hidden="true">
+    <div class="marquee marquee--slow"><div class="marquee__track" id="lockTrack1"></div></div>
+    <div class="marquee marquee--slow marquee--rev"><div class="marquee__track" id="lockTrack2"></div></div>
+    <div class="marquee marquee--slow"><div class="marquee__track" id="lockTrack3"></div></div>
+  </div>
+
+  <div class="lock-spot" aria-hidden="true"></div>
+
+  <!-- Language switcher (lock screen) -->
+  <div class="absolute top-0 left-0 right-0 flex items-center justify-between"
+       style="padding:clamp(16px,4vw,30px) clamp(16px,5vw,40px);z-index:4">
+    <span class="eyebrow lock-enter lock-enter--1" style="color:rgba(250,248,242,.62)"
+          data-lang="lockCorner"></span>
+    <nav class="lang lock-enter lock-enter--1" style="color:var(--ivory)" aria-label="Language">
+      <button type="button" class="lang__btn" data-lang-switch="vi" aria-label="Tiếng Việt">VI</button>
+      <span class="lang__sep">/</span>
+      <button type="button" class="lang__btn" data-lang-switch="en" aria-label="English">EN</button>
+    </nav>
+  </div>
+
+  <div class="lock-card">
+
+    <p class="eyebrow lock-enter lock-enter--1" style="color:rgba(250,248,242,.7)"
+       data-lang="lockKicker"></p>
+
+    <h1 id="lockTitle" class="lock-enter lock-enter--2" style="margin:clamp(14px,4vw,26px) 0 0">
+      <img class="lock-monogram" data-img="monogram" alt="H &amp; L" decoding="async" />
+      <span class="sr-only">H &amp; L</span>
+    </h1>
+
+    <p class="italic-note lock-enter lock-enter--3"
+       style="margin:clamp(14px,4vw,22px) auto clamp(26px,7vw,44px);max-width:30ch;font-size:clamp(16px,3.9vw,20px);line-height:1.62;color:rgba(250,248,242,.86)"
+       data-lang="lockQuote"></p>
+
+    <form id="lockForm" class="lock-enter lock-enter--4" autocomplete="off" novalidate>
+      <div class="field" id="lockField">
+        <label class="field__label sr-only" for="lockInput" data-lang="lockInputLabel"></label>
+        <input id="lockInput" name="invitationCode" type="password" class="field__input"
+               inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false"
+               data-lang-placeholder="lockPlaceholder" aria-describedby="lockError" />
+        <span class="field__line"></span>
+      </div>
+      <p id="lockError" class="lock-err" role="alert" aria-live="polite"></p>
+      <button type="submit" class="btn magnetic" style="margin-top:clamp(14px,4vw,22px);min-width:210px">
+        <span data-lang="lockEnter"></span>
+      </button>
+    </form>
+
+    <p class="lock-enter lock-enter--5"
+       style="margin-top:clamp(26px,7vw,44px);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,248,242,.58)"
+       data-lang="lockHint"></p>
+  </div>
+</div>
+
+<!-- Intro veil used for the reveal transition after unlocking -->
+<div class="intro-veil" id="introVeil" aria-hidden="true"></div>
+
+<!-- =========================
+     HEADER
+========================= -->
+<header class="site-header" id="siteHeader">
+  <a href="#hero" class="header-mono" aria-label="Top">
+    <span data-config="groomInitial">H</span><em>&amp;</em><span data-config="brideInitial">L</span>
+  </a>
+
+  <div class="flex items-center" style="gap:clamp(14px,3vw,28px)">
+    <span class="meta hidden sm:inline" data-config="weddingDateDisplay">06.12.2026</span>
+    <nav class="lang" aria-label="Language">
+      <button type="button" class="lang__btn" data-lang-switch="vi" aria-label="Tiếng Việt">VI</button>
+      <span class="lang__sep">/</span>
+      <button type="button" class="lang__btn" data-lang-switch="en" aria-label="English">EN</button>
+    </nav>
+  </div>
+</header>
+
+<main id="site" aria-hidden="true">
+
+  <!-- =========================
+       HERO
+  ========================= -->
+  <section class="hero" id="hero">
+
+    <div class="hero__media parallax" data-speed="-0.12">
+      <img data-img="hero" alt="" fetchpriority="high" decoding="async" />
+    </div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+
+    <!-- Floating background typography -->
+    <span class="hero__float parallax" data-speed="0.06" aria-hidden="true"
+          style="top:14vh;left:-4vw;font-size:clamp(5rem,22vw,20rem)">Forever</span>
+    <span class="hero__float parallax" data-speed="-0.05" aria-hidden="true"
+          style="bottom:26vh;right:-6vw;font-size:clamp(4rem,17vw,15rem);font-style:italic">Amour</span>
+
+    <!-- Top meta bar -->
+    <div class="hero__meta shell absolute left-0 right-0 z-[2]">
+      <div>
+        <div data-rv="up">
+          <p class="eyebrow" data-lang="heroKicker"></p>
+          <p class="eyebrow" style="margin-top:6px;color:var(--ink-30)" data-lang="heroKicker2"></p>
+        </div>
+        <div class="hero__meta-right" data-rv="up" style="transition-delay:.12s">
+          <p class="eyebrow" data-lang="heroPlace"></p>
+          <p class="eyebrow" style="margin-top:6px;color:var(--ink-30)" data-lang="heroPlaceSub"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero content -->
+    <div class="hero__inner shell" style="padding-bottom:clamp(28px,7vh,72px)">
+
+      <!-- Editorial date row -->
+      <div class="hero__date" data-rv="up" style="margin-bottom:clamp(18px,4vh,40px)">
+        <span class="hero__num">06</span>
+        <div style="padding-bottom:clamp(6px,1.4vh,14px)">
+          <span class="eyebrow block" data-lang="heroMonth"></span>
+          <span class="eyebrow block" style="margin-top:4px;color:var(--ink-30)">2026</span>
+        </div>
+        <div class="hidden md:block flex-1" style="padding-bottom:14px">
+          <div class="rule" data-rv="line"></div>
+        </div>
+        <span class="hero__num hidden md:inline" style="font-style:italic;color:var(--ink-30)">XII</span>
+      </div>
+
+      <!-- Giant title -->
+      <h1 class="display-xl" data-rv="mask" data-split="line" data-lang="heroTitle"></h1>
+
+      <!-- Bottom row -->
+      <div class="grid gap-y-8 md:gap-y-0 md:grid-cols-12 items-end"
+           style="margin-top:clamp(26px,6vh,64px)">
+        <div class="md:col-span-5" data-rv="up">
+          <div class="rule-soft" style="margin-bottom:16px"></div>
+          <p class="serif-lead" data-lang="heroSub"></p>
+        </div>
+
+        <div class="md:col-span-4 md:col-start-8 flex md:justify-end" data-rv="up" style="transition-delay:.1s">
+          <div class="flex items-end gap-6">
+            <p class="body-sm" style="max-width:26ch" data-lang="heroNote"></p>
+            <div class="scroll-cue" aria-hidden="true">
+              <span class="vertical-label" data-lang="scroll"></span>
+              <span class="scroll-cue__line"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       MARQUEE STATEMENT
+  ========================= -->
+  <section class="hairline-top" style="padding-block:clamp(22px,4vw,38px);overflow:hidden">
+    <div class="marquee display-l" style="color:var(--ink-30)" aria-hidden="true">
+      <div class="marquee__track" id="statementTrack"></div>
+    </div>
+  </section>
+
+  <!-- =========================
+       COUNTDOWN
+  ========================= -->
+  <section class="section hairline-top" id="countdown">
+    <div class="shell">
+
+      <div class="grid md:grid-cols-12 gap-y-6" style="margin-bottom:clamp(34px,7vw,72px)">
+        <div class="md:col-span-4">
+          <p class="eyebrow eyebrow--sage" data-lang="countEyebrow"></p>
+        </div>
+        <div class="md:col-span-6 md:col-start-6">
+          <h2 class="display-m" data-rv="mask" data-split="line" data-lang="countTitle"></h2>
+          <p class="body-sm" style="margin-top:18px;max-width:44ch" data-lang="countNote"></p>
+        </div>
+      </div>
+
+      <div class="count-row" id="countRow" role="timer" aria-live="off">
+        <div class="count-cell" data-rv="up">
+          <span class="count-num tnum" id="cdDays">0</span>
+          <span class="count-lab" data-lang="cdDays"></span>
+        </div>
+        <div class="count-cell" data-rv="up" style="transition-delay:.08s">
+          <span class="count-num" id="cdHours">00</span>
+          <span class="count-lab" data-lang="cdHours"></span>
+        </div>
+        <div class="count-cell" data-rv="up" style="transition-delay:.16s">
+          <span class="count-num" id="cdMinutes">00</span>
+          <span class="count-lab" data-lang="cdMinutes"></span>
+        </div>
+        <div class="count-cell" data-rv="up" style="transition-delay:.24s">
+          <span class="count-num" id="cdSeconds">00</span>
+          <span class="count-lab" data-lang="cdSeconds"></span>
+        </div>
+      </div>
+
+      <p id="cdMessage" class="display-m hide" style="margin-top:30px" data-lang="cdToday"></p>
+    </div>
+  </section>
+
+  <!-- =========================
+       COUPLE
+  ========================= -->
+  <section class="section hairline-top" id="couple">
+    <div class="shell">
+
+      <!-- Section head -->
+      <div class="grid md:grid-cols-12 items-end gap-y-6" style="margin-bottom:clamp(40px,8vw,90px)">
+        <div class="md:col-span-7">
+          <p class="eyebrow eyebrow--sage" style="margin-bottom:18px" data-lang="coupleEyebrow"></p>
+          <h2 class="display-l" data-rv="mask" data-split="line" data-lang="coupleTitle"></h2>
+        </div>
+        <div class="md:col-span-4 md:col-start-9">
+          <div class="rule-soft" style="margin-bottom:16px"></div>
+          <p class="body-sm" data-lang="coupleIntro"></p>
+        </div>
+      </div>
+
+      <!-- Asymmetric polaroid composition -->
+      <div class="grid grid-cols-12 gap-y-[14vw] md:gap-y-0" style="position:relative">
+
+        <!-- Bride -->
+        <figure class="col-span-10 md:col-span-4 md:col-start-1 polaroid tilt-a img-hover"
+                data-rv="up" style="margin-top:0">
+          <div class="img-frame ar-4x5">
+            <span class="veil" aria-hidden="true"></span>
+            <span class="polaroid__stamp tnum" data-config="filmStamp">FILM · 400</span>
+            <img data-img="bride" data-lang-alt="altBride" loading="lazy" decoding="async" />
+          </div>
+          <figcaption>
+            <p class="polaroid__cap" data-lang="brideRole"></p>
+          </figcaption>
+        </figure>
+
+        <!-- Bride text -->
+        <div class="col-span-12 md:col-span-3 md:col-start-6 md:self-end"
+             style="margin-top:clamp(18px,4vw,0px)" data-rv="up">
+          <p class="film-tag" data-lang="brideRole"></p>
+          <h3 class="display-m" style="margin-top:12px" data-config="brideName">Ngô Kiều Loan</h3>
+          <p class="body-sm" style="margin-top:14px" data-lang="brideDesc"></p>
+          <p class="font-hand" style="margin-top:18px;font-size:18px;color:var(--deep-sage)"
+             data-lang="brideNote"></p>
+        </div>
+
+        <!-- Groom -->
+        <figure class="col-span-10 col-start-3 md:col-span-4 md:col-start-9 polaroid tilt-b img-hover"
+                data-rv="up" style="margin-top:clamp(0px,10vw,140px)">
+          <div class="img-frame ar-4x5">
+            <span class="veil" aria-hidden="true"></span>
+            <span class="polaroid__stamp tnum" data-config="filmStamp">FILM · 400</span>
+            <img data-img="groom" data-lang-alt="altGroom" loading="lazy" decoding="async" />
+          </div>
+          <figcaption>
+            <p class="polaroid__cap" data-lang="groomRole"></p>
+          </figcaption>
+        </figure>
+
+        <!-- Groom text -->
+        <div class="col-span-12 md:col-span-3 md:col-start-9 md:col-end-12"
+             style="margin-top:clamp(18px,4vw,34px)" data-rv="up">
+          <p class="film-tag" data-lang="groomRole"></p>
+          <h3 class="display-m" style="margin-top:12px" data-config="groomName">Bùi Huy Hoàng</h3>
+          <p class="body-sm" style="margin-top:14px" data-lang="groomDesc"></p>
+          <p class="font-hand" style="margin-top:18px;font-size:18px;color:var(--deep-sage)"
+             data-lang="groomNote"></p>
+        </div>
+
+        <!-- Editorial vertical label (desktop) -->
+        <span class="vertical-label hidden md:block"
+              style="position:absolute;left:calc(33.33% + 24px);top:18%"
+              data-lang="coupleAside"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       TIMELINE
+  ========================= -->
+  <section class="section hairline-top" id="theday">
+    <div class="shell">
+
+      <div class="grid md:grid-cols-12 items-end gap-y-6" style="margin-bottom:clamp(40px,8vw,86px)">
+        <div class="md:col-span-5">
+          <p class="eyebrow eyebrow--sage" style="margin-bottom:18px" data-lang="dayEyebrow"></p>
+          <h2 class="display-l" data-rv="mask" data-split="line" data-lang="dayTitle"></h2>
+        </div>
+        <div class="md:col-span-4 md:col-start-9">
+          <div class="rule-soft" style="margin-bottom:16px"></div>
+          <p class="body-sm" data-lang="dayIntro"></p>
+          <p class="meta" style="margin-top:14px" data-config="venueName"></p>
+          <p class="body-sm" data-config="venueAddress"></p>
+        </div>
+      </div>
+
+      <div class="tl" data-rv="fade">
+        <span class="tl__spine" aria-hidden="true"></span>
+
+        <article class="tl__item" data-rv="up">
+          <span class="tl__dot" aria-hidden="true"></span>
+          <div><p class="tl__time tnum">11:00</p></div>
+          <div>
+            <h3 class="eyebrow" style="color:var(--charcoal)" data-lang="ev1Title"></h3>
+            <p class="serif-lead" style="margin-top:10px" data-lang="ev1Name"></p>
+            <p class="body-sm" style="margin-top:8px;max-width:46ch" data-lang="ev1Desc"></p>
+          </div>
+        </article>
+
+        <article class="tl__item" data-rv="up">
+          <span class="tl__dot" aria-hidden="true"></span>
+          <div><p class="tl__time tnum">11:30</p></div>
+          <div>
+            <h3 class="eyebrow" style="color:var(--charcoal)" data-lang="ev2Title"></h3>
+            <p class="serif-lead" style="margin-top:10px" data-lang="ev2Name"></p>
+            <p class="body-sm" style="margin-top:8px;max-width:46ch" data-lang="ev2Desc"></p>
+          </div>
+        </article>
+
+        <article class="tl__item" data-rv="up">
+          <span class="tl__dot" aria-hidden="true"></span>
+          <div><p class="tl__time tnum">12:00</p></div>
+          <div>
+            <h3 class="eyebrow" style="color:var(--charcoal)" data-lang="ev3Title"></h3>
+            <p class="serif-lead" style="margin-top:10px" data-lang="ev3Name"></p>
+            <p class="body-sm" style="margin-top:8px;max-width:46ch" data-lang="ev3Desc"></p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       RSVP
+  ========================= -->
+  <section class="section hairline-top" id="rsvp">
+    <div class="shell">
+
+      <div class="grid md:grid-cols-12 gap-y-10 md:gap-x-10">
+
+        <!-- Left: statement -->
+        <div class="md:col-span-5">
+          <p class="eyebrow eyebrow--sage" style="margin-bottom:18px" data-lang="rsvpEyebrow"></p>
+          <h2 class="display-l" data-rv="mask" data-split="line" data-lang="rsvpTitle"></h2>
+          <p class="serif-lead" style="margin-top:clamp(18px,4vw,28px);max-width:34ch"
+             data-lang="rsvpLead"></p>
+
+          <div class="rule-soft" style="margin-block:clamp(22px,5vw,36px)"></div>
+          <p class="meta" data-lang="rsvpDeadlineLabel"></p>
+          <p class="display-m tnum" data-config="rsvpDeadline">20.11.2026</p>
+        </div>
+
+        <!-- Right: form -->
+        <div class="md:col-span-6 md:col-start-7">
+          <form id="rsvpForm" novalidate autocomplete="on">
+
+            <div class="field" id="fieldName" style="margin-bottom:clamp(26px,6vw,42px)">
+              <label class="field__label" for="rsvpName" data-lang="nameLabel"></label>
+              <input id="rsvpName" name="name" type="text" class="field__input" required
+                     autocomplete="name" data-lang-placeholder="namePlaceholder"
+                     aria-describedby="errName" />
+              <span class="field__line"></span>
+              <span class="field__error" id="errName" role="alert"></span>
+            </div>
+
+            <div class="field" id="fieldPhone" style="margin-bottom:clamp(26px,6vw,42px)">
+              <label class="field__label" for="rsvpPhone" data-lang="phoneLabel"></label>
+              <input id="rsvpPhone" name="phone" type="tel" class="field__input" required
+                     inputmode="numeric" autocomplete="tel" maxlength="15" pattern="[0-9+ .()-]*"
+                     data-lang-placeholder="phonePlaceholder" aria-describedby="errPhone" />
+              <span class="field__line"></span>
+              <span class="field__error" id="errPhone" role="alert"></span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-5">
+              <button type="submit" id="rsvpSubmit" class="btn magnetic" style="min-width:min(100%,280px)">
+                <span id="rsvpSubmitText" data-lang="rsvpSubmit"></span>
+              </button>
+              <span class="meta" id="rsvpGroupTag"></span>
+            </div>
+
+            <p class="field__error" id="rsvpFormError" role="alert"
+               style="opacity:1;margin-top:18px;min-height:0"></p>
+          </form>
+
+          <!-- Nhắc nhẹ khi khách đã đăng ký ít nhất một người -->
+          <p class="body-sm hide" id="rsvpAgainNote" style="margin-top:22px;color:var(--deep-sage)"
+             data-lang="rsvpAgain"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       MỪNG CƯỚI
+  ========================= -->
+  <section class="section hairline-top" id="gift">
+    <div class="shell">
+
+      <div class="grid md:grid-cols-12 items-end gap-y-6" style="margin-bottom:clamp(36px,7vw,72px)">
+        <div class="md:col-span-6">
+          <p class="eyebrow eyebrow--sage" style="margin-bottom:18px" data-lang="giftEyebrow"></p>
+          <h2 class="display-l" data-rv="mask" data-split="line" data-lang="giftTitle"></h2>
+        </div>
+        <div class="md:col-span-4 md:col-start-9">
+          <div class="rule-soft" style="margin-bottom:16px"></div>
+          <p class="body-sm" data-lang="giftIntro"></p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-12 gap-y-10 md:gap-x-8">
+
+        <!-- Chú rể -->
+        <article class="gift-card md:col-span-5 md:col-start-1" data-rv="up">
+          <p class="eyebrow" data-lang="groomRole"></p>
+          <h3 class="display-m" style="margin-top:10px" id="giftGroomName">BÙI HUY HOÀNG</h3>
+          <span class="gift-divider" aria-hidden="true"></span>
+          <div class="gift-qr">
+            <img id="giftGroomQr" data-lang-alt="altQrGroom" loading="lazy" decoding="async" />
+          </div>
+          <p class="meta" data-lang="giftScanHint"></p>
+          <p class="meta" style="margin-top:16px" data-lang="giftBankLabel"></p>
+          <p class="body-sm" id="giftGroomBank" style="margin-top:2px">TPBank</p>
+          <p class="meta" style="margin-top:14px" data-lang="giftAccountLabel"></p>
+          <p class="gift-acc" id="giftGroomAccount">2345 6789 866</p>
+          <button type="button" class="copy-chip magnetic" id="giftGroomCopy" style="margin-top:16px">
+            <span data-lang="giftCopy"></span>
+          </button>
+        </article>
+
+        <!-- Cô dâu -->
+        <article class="gift-card md:col-span-5 md:col-start-7" data-rv="up" style="transition-delay:.1s">
+          <p class="eyebrow" data-lang="brideRole"></p>
+          <h3 class="display-m" style="margin-top:10px" id="giftBrideName">NGÔ KIỀU LOAN</h3>
+          <span class="gift-divider" aria-hidden="true"></span>
+          <div class="gift-qr">
+            <img id="giftBrideQr" data-lang-alt="altQrBride" loading="lazy" decoding="async" />
+          </div>
+          <p class="meta" data-lang="giftScanHint"></p>
+          <p class="meta" style="margin-top:16px" data-lang="giftBankLabel"></p>
+          <p class="body-sm" id="giftBrideBank" style="margin-top:2px">TPBank</p>
+          <p class="meta" style="margin-top:14px" data-lang="giftAccountLabel"></p>
+          <p class="gift-acc" id="giftBrideAccount">2345 6789 688</p>
+          <button type="button" class="copy-chip magnetic" id="giftBrideCopy" style="margin-top:16px">
+            <span data-lang="giftCopy"></span>
+          </button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       SECRET MEMORY
+  ========================= -->
+  <section class="section hairline-top" id="memorySection" aria-labelledby="memoryTitle">
+    <div class="shell">
+
+      <div class="grid md:grid-cols-12 items-end gap-y-6" style="margin-bottom:clamp(36px,7vw,72px)">
+        <div class="md:col-span-6">
+          <p class="eyebrow eyebrow--sage" style="margin-bottom:18px" data-lang="memEyebrow"></p>
+          <h2 class="display-l" id="memoryTitle" data-rv="mask" data-split="line" data-lang="memTitle"></h2>
+        </div>
+        <div class="md:col-span-4 md:col-start-9">
+          <div class="rule-soft" style="margin-bottom:16px"></div>
+          <p class="body-sm" data-lang="memIntro"></p>
+        </div>
+      </div>
+
+      <!-- Lock panel -->
+      <div id="memoryLock" class="grid md:grid-cols-12">
+        <div class="md:col-span-6 md:col-start-4">
+          <form id="memoryForm" novalidate autocomplete="off">
+            <div class="field" id="fieldMemory">
+              <label class="field__label" for="memoryInput" data-lang="memPassLabel"></label>
+              <input id="memoryInput" name="memoryPassword" type="text" class="field__input"
+                     autocapitalize="none" autocorrect="off" spellcheck="false"
+                     data-lang-placeholder="memPassPlaceholder" aria-describedby="errMemory" />
+              <span class="field__line"></span>
+              <span class="field__error" id="errMemory" role="alert"></span>
+            </div>
+            <button type="submit" id="memorySubmit" class="btn magnetic"
+                    style="margin-top:clamp(22px,5vw,34px);min-width:min(100%,280px)">
+              <span id="memorySubmitText" data-lang="memUnlock"></span>
+            </button>
+          </form>
+          <p class="body-sm" style="margin-top:22px" data-lang="memHint"></p>
+
+          <!-- Chỉ hiện khi khách chưa có mã -->
+          <div id="memoryNeedsCode" class="hide" style="margin-top:clamp(20px,4vw,28px)">
+            <div class="rule-soft" style="margin-bottom:18px"></div>
+            <p class="body-sm" data-lang="memNoCode"></p>
+            <a href="#rsvp" class="link-underline meta" style="display:inline-block;margin-top:12px;color:var(--deep-sage)"
+               data-lang="memGoRsvp"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gallery -->
+      <div id="memoryGallery" class="hide">
+        <div class="gal" style="margin-top:clamp(20px,4vw,40px)">
+
+          <figure class="gal__it gal__it--a img-frame-wrap" data-rv="up">
+            <div class="img-frame ar-3x2 img-hover"><span class="veil"></span>
+              <img data-img="m1" data-lang-alt="altMemory" loading="lazy" decoding="async" /></div>
+            <figcaption class="gal__cap"><span class="meta" data-lang="gal1"></span><span class="meta tnum">01</span></figcaption>
+          </figure>
+
+          <figure class="gal__it gal__it--b" data-rv="up">
+            <div class="img-frame ar-4x5 img-hover"><span class="veil"></span>
+              <img data-img="m2" data-lang-alt="altMemory" loading="lazy" decoding="async" /></div>
+            <figcaption class="gal__cap"><span class="meta" data-lang="gal2"></span><span class="meta tnum">02</span></figcaption>
+          </figure>
+
+          <figure class="gal__it gal__it--c" data-rv="up">
+            <div class="img-frame ar-4x5 img-hover"><span class="veil"></span>
+              <img data-img="m3" data-lang-alt="altMemory" loading="lazy" decoding="async" /></div>
+            <figcaption class="gal__cap"><span class="meta" data-lang="gal3"></span><span class="meta tnum">03</span></figcaption>
+          </figure>
+
+          <figure class="gal__it gal__it--d" data-rv="up">
+            <div class="img-frame ar-2x3 img-hover"><span class="veil"></span>
+              <img data-img="m5" data-lang-alt="altMemory" loading="lazy" decoding="async" /></div>
+            <figcaption class="gal__cap"><span class="meta" data-lang="gal4"></span><span class="meta tnum">04</span></figcaption>
+          </figure>
+
+          <figure class="gal__it gal__it--e" data-rv="up">
+            <div class="img-frame ar-3x2 img-hover"><span class="veil"></span>
+              <img data-img="m4" data-lang-alt="altMemory" loading="lazy" decoding="async" /></div>
+            <figcaption class="gal__cap"><span class="meta" data-lang="gal5"></span><span class="meta tnum">05</span></figcaption>
+          </figure>
+
+          <figure class="gal__it gal__it--f" data-rv="up">
+            <div class="img-frame ar-1x1 img-hover"><span class="veil"></span>
+              <img data-img="m6" data-lang-alt="altMemory" loading="lazy" decoding="async" /></div>
+            <figcaption class="gal__cap"><span class="meta" data-lang="gal6"></span><span class="meta tnum">06</span></figcaption>
+          </figure>
+
+          <figure class="gal__it gal__it--g" data-rv="up">
+            <div class="img-frame ar-4x5 img-hover"><span class="veil"></span>
+              <img data-img="m7" data-lang-alt="altMemory" loading="lazy" decoding="async" /></div>
+            <figcaption class="gal__cap"><span class="meta" data-lang="gal7"></span><span class="meta tnum">07</span></figcaption>
+          </figure>
+        </div>
+
+        <p class="italic-note" style="margin-top:clamp(30px,6vw,54px);text-align:center;font-size:clamp(16px,4vw,22px);color:var(--ink-45)"
+           data-lang="memOutro"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       FOOTER
+  ========================= -->
+  <footer class="hairline-top" style="padding-block:clamp(60px,10vw,120px)">
+    <div class="shell">
+      <div class="marquee footer-marquee" style="color:var(--ink-30);margin-bottom:clamp(34px,7vw,80px)" aria-hidden="true">
+        <div class="marquee__track marquee--rev" id="footerTrack"></div>
+      </div>
+
+      <div class="footer-grid grid md:grid-cols-12 gap-y-8 items-end">
+        <div class="md:col-span-5">
+          <p class="display-m footer-names">
+            <span data-config="groomName">Bùi Huy Hoàng</span><span class="amp">&amp;</span><span data-config="brideName">Ngô Kiều Loan</span>
+          </p>
+          <p class="meta" style="margin-top:12px" data-config="weddingDateDisplay"></p>
+        </div>
+        <div class="md:col-span-3 md:col-start-7">
+          <p class="body-sm" data-lang="footerThanks"></p>
+          <a class="link-underline meta" id="zaloLink" href="#" target="_blank" rel="noopener noreferrer"
+             style="display:inline-block;margin-top:14px;color:var(--deep-sage)" data-lang="footerZalo"></a>
+        </div>
+        <div class="md:col-span-3 md:col-start-10 md:text-right">
+          <p class="meta" data-lang="footerMade"></p>
+          <p class="meta" style="margin-top:8px">© 2026</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- =========================
+     MODALS
+========================= -->
+<div class="modal" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle" aria-hidden="true">
+  <div class="modal__scrim" data-modal-close></div>
+  <div class="modal__panel" role="document">
+
+    <p class="eyebrow eyebrow--sage" data-lang="modalKicker"></p>
+    <h2 class="display-m" id="successTitle" style="margin-top:14px" data-lang="modalTitle"></h2>
+    <p class="serif-lead" style="margin-top:16px" data-lang="modalBody"></p>
+
+    <div class="code-plate">
+      <p class="eyebrow" data-lang="modalCodeLabel"></p>
+      <p class="code-plate__val" id="uniqueCode">--------</p>
+    </div>
+
+    <p class="body-sm" data-lang="modalUnlockLabel"></p>
+    <p class="tnum" id="memoryPasswordPreview"
+       style="margin-top:8px;font-size:clamp(14px,3.6vw,18px);letter-spacing:.08em;word-break:break-all"></p>
+
+    <p class="body-sm hide" id="modalDemoNote"
+       style="margin-top:16px;color:var(--deep-sage)" data-lang="modalDemoNote"></p>
+
+    <button type="button" class="copy-chip" id="copyCodeBtn" style="margin-top:18px">
+      <span id="copyCodeText" data-lang="modalCopy"></span>
+    </button>
+
+    <div class="rule-soft" style="margin-block:clamp(22px,5vw,34px)"></div>
+
+    <button type="button" class="btn magnetic" data-modal-close style="min-width:min(100%,240px)">
+      <span data-lang="modalClose"></span>
+    </button>
+  </div>
+</div>
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+<script>
+(function () {
+  "use strict";
+
+  /* =====================================================================
+     01 — GLOBAL CONFIG
+     Chỉ cần chỉnh sửa trong khối này khi triển khai thật.
+  ===================================================================== */
+
+  const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbxT1AKikDEoHaLA1bTUyaSAC_LOaDQIpnwadYUEREa-3XQEQoF_PmyiRRPCw2yAC_HfHw/exec";
+  const SDO_ZALO       = "0369820154";
+
+  const WEDDING_CONFIG = {
+    brideName:          "Ngô Kiều Loan",
+    groomName:          "Bùi Huy Hoàng",
+    brideInitial:       "L",
+    groomInitial:       "H",
+    weddingDate:        "2026-12-06T11:30:00",   /* đếm ngược tới đúng giờ làm lễ */
+    weddingDateDisplay: "06/12/2026",
+    ceremonyTime:       "11:30",
+    rsvpDeadline:       "20/11/2026",
+    venueName:          "Nhà hàng Thiên Trang",
+    venueAddress:       "Cẩm Phả, Quảng Ninh",
+    filmStamp:          "06 · 12 · 26",
+
+    /* Ảnh — thay đường dẫn tại đây (đang dùng ảnh dựng tạm trong /assets) */
+    images: {
+      monogram: "assets/monogram.png",   /* chữ lồng H&L ở màn khoá */
+      hero:  "assets/hero.jpg",
+      bride: "assets/bride.jpg",
+      groom: "assets/groom.jpg",
+      m1:    "assets/m-01.jpg",
+      m2:    "assets/m-02.jpg",
+      m3:    "assets/m-03.jpg",
+      m4:    "assets/m-04.jpg",
+      m5:    "assets/m-05.jpg",
+      m6:    "assets/m-06.jpg",
+      m7:    "assets/m-07.jpg"
+    },
+
+    /* true  = luôn hiện chương Secret Memory ở trạng thái đã khoá (khách biết là có album)
+       false = chỉ hiện sau khi khách RSVP và đã có mã */
+    alwaysShowMemory: true,
+
+    /* false = lần nào mở thiệp cũng phải nhập mã (giữ trọn màn khoá cho khách).
+       true  = thiết bị đã mở một lần thì lần sau vào thẳng.
+       Muốn tự vào mà không đổi cái này: dùng địa chỉ kèm mã, vd index.html#huyhoang7220 */
+    rememberUnlock: false,
+
+    /* Mừng cưới — thay số tài khoản và ảnh QR tại đây */
+    gift: {
+      groom: { role: "Chú rể", name: "BÙI HUY HOÀNG", bank: "TPBank",
+               account: "2345 6789 866", qr: "assets/qr-groom.png" },
+      bride: { role: "Cô dâu", name: "NGÔ KIỀU LOAN", bank: "TPBank",
+               account: "2345 6789 688", qr: "assets/qr-bride.png" }
+    },
+
+    /* Timeout mạng (ms) */
+    timeouts: { backend: 15000 }
+  };
+
+  /**
+   * Hash SHA-256 của mã mời → tên nhóm khách.
+   * Tên nhóm phải khớp chính xác với GROUP_TO_TAB trong apps-script/Code.gs
+   * để backend ghi khách vào đúng tab "nhà trai" / "nhà gái".
+   *
+   *
+   * Đổi mã: chạy CryptoJS.SHA256("mamoi").toString() trong DevTools rồi thay hash.
+   *
+   * (3 hash trong brief ban đầu đã được gỡ bỏ: đã kiểm chứng chúng KHÔNG phải
+   *  SHA-256 của banchuore/bancodau/giadinh nên không có mật khẩu nào mở được.)
+   */
+  const passwordGroups = {
+    "42d799d8df9c0ff801d072ae98a4d2a764c7a918740aea6a93fef3c6f2961c26": "Bạn Chú Rể",
+    "d11da861bd1527392cf5fc93c60dd24e29f1603b4968930c192cab1f62a9be3d": "Gia Đình Nhà Trai",
+    "0872fce7e144963581786ba9eef08f12e65d3a0b95ef9572e11c5b47c75598ce": "Bạn Cô Dâu",
+    "6899de9467afc96788aaf6bcec5ff0dbad61f2924aadd70d9e8525bc4059b976": "Gia Đình Nhà Gái",
+    "0ac4443daa92b81d8a39bc0f9b613ccaed11998fce4624c9dea72e8cf7cbabbb": "Cô Dâu & Chú Rể"
+  };
+
+  /**
+   * Nhóm khách thuộc bên nào.
+   * Quyết định 2 thứ: tông màu nền và thẻ QR mừng cưới nào được hiện.
+   * null = hiện cả hai (mã chủ nhà, hoặc chưa xác định).
+   */
+  const SIDE_BY_GROUP = {
+    "Bạn Chú Rể":        "groom",
+    "Gia Đình Nhà Trai": "groom",
+    "Bạn Cô Dâu":        "bride",
+    "Gia Đình Nhà Gái":  "bride",
+    "Cô Dâu & Chú Rể":   null
+  };
+
+  const STORAGE_KEYS = {
+    lang:   "preferredLang",
+    group:  "guestGroup",
+    rsvp:   "rsvpDone",
+    code:   "invitationCode",
+    memory: "memoryUnlocked"   /* chỉ dùng để dọn cờ cũ — không lưu mới nữa */
+  };
+
+  /* =====================================================================
+     02 — TRANSLATIONS (VI / EN)
+  ===================================================================== */
+
+  const translations = {
+    vi: {
+      /* Lock screen */
+      lockCorner:        "Thiệp mời riêng tư",
+      lockKicker:        "Trân trọng kính mời",
+      lockQuote:         "“Có những lời hẹn không cần nói to — chỉ cần đúng người, đúng ngày.”",
+      lockInputLabel:    "Mã mời",
+      lockPlaceholder:   "NHẬP MÃ MỜI",
+      lockEnter:         "Mở thiệp",
+      lockHint:          "Mã mời được gửi kèm trong lời mời của bạn",
+      lockBg1:           "Mãi mãi · Bên nhau ·",
+      lockBg2:           "06 · 12 · 2026 ·",
+      lockBg3:           "Thiệp mời riêng tư ·",
+      lockEmpty:         "Vui lòng nhập mã mời",
+      lockWrong:         "Mã mời chưa chính xác — thử lại nhé",
+      lockCryptoError:   "Không xác thực được mã lúc này. Vui lòng kiểm tra kết nối mạng và tải lại trang.",
+
+      /* Hero */
+      heroKicker:        "Lưu lại ngày này",
+      heroKicker2:       "Chủ Nhật · 06.12.2026",
+      heroPlace:         "Cẩm Phả · Quảng Ninh",
+      heroPlaceSub:      "Chương một",
+      heroMonth:         "Tháng Mười Hai",
+      heroTitle:         "NƠI BẮT ĐẦU\nCỦA MÃI MÃI",
+      heroSub:           "Một câu chuyện chúng tôi chọn để cùng nhau viết tiếp — bằng ánh sáng, sự tĩnh lặng và rất nhiều yêu thương.",
+      heroNote:          "Chúng tôi mong được nhìn thấy bạn trong ngày đặc biệt này.",
+      scroll:            "Cuộn xuống",
+      statement:         "Câu chuyện chúng tôi chọn để cùng nhau viết tiếp ·",
+
+      /* Countdown */
+      countEyebrow:      "Đếm ngược",
+      countTitle:        "Chỉ còn\nmột khoảnh khắc nữa",
+      countNote:         "Thời gian được tính đến 11:30 trưa Chủ Nhật, ngày 06 tháng 12 năm 2026.",
+      cdDays:            "Ngày",
+      cdHours:           "Giờ",
+      cdMinutes:         "Phút",
+      cdSeconds:         "Giây",
+      cdToday:           "Hôm nay là ngày của chúng tôi.",
+
+      /* Couple */
+      coupleEyebrow:     "Cô dâu & Chú rể",
+      coupleTitle:       "HAI NGƯỜI\nMỘT CHƯƠNG",
+      coupleIntro:       "Hai người sinh cùng một năm, cùng mệnh Kim — gặp nhau đủ muộn để hiểu mình muốn gì, và đủ sớm để còn cả một đời phía trước.",
+      coupleAside:       "Chương một · 2026",
+      brideRole:         "Cô dâu",
+      brideDesc:         "Người thích ánh sáng buổi sớm, mùi giấy mới và những buổi chiều không vội vàng.",
+      brideNote:         "và rồi mọi thứ trở nên đúng chỗ",
+      groomRole:         "Chú rể",
+      groomDesc:         "Người ít nói, nhớ lâu, và luôn có mặt đúng lúc cần nhất.",
+      groomNote:         "anh chọn em, mỗi ngày",
+      altBride:          "Ảnh cô dâu",
+      altGroom:          "Ảnh chú rể",
+
+      /* Timeline */
+      dayEyebrow:        "Ngày trọng đại",
+      dayTitle:          "MỘT NGÀY\nCỦA CHÚNG TÔI",
+      dayIntro:          "Lễ thành hôn bắt đầu lúc 11:30. Rất mong bạn có mặt trước ít phút để chúng ta cùng nhau bắt đầu.",
+      ev1Title:          "Đón khách",
+      ev1Name:           "Chào mừng bạn đến chung vui",
+      ev1Desc:           "Chúng tôi có mặt tại nhà hàng để đón và chào bạn.",
+      ev2Title:          "Lễ thành hôn",
+      ev2Name:           "Nghi thức chính của ngày hôm ấy",
+      ev2Desc:           "Nghi lễ ấm cúng cùng gia đình hai bên và những người thân thiết nhất.",
+      ev3Title:          "Tiệc trưa",
+      ev3Name:           "Cùng nhau nâng ly",
+      ev3Desc:           "Bữa trưa, âm nhạc và những câu chuyện không có giờ kết thúc.",
+
+      /* RSVP */
+      rsvpEyebrow:       "Xác nhận tham dự",
+      rsvpTitle:         "BẠN SẼ ĐẾN\nCÙNG CHÚNG TÔI CHỨ?",
+      rsvpLead:          "Xác nhận tham dự giúp chúng tôi chuẩn bị một chỗ ngồi thật vừa vặn dành riêng cho bạn.",
+      rsvpDeadlineLabel: "Vui lòng xác nhận trước",
+      nameLabel:         "Họ và tên",
+      namePlaceholder:   "Tên của bạn",
+      phoneLabel:        "Số điện thoại",
+      phonePlaceholder:  "10 số, ví dụ 0912345678",
+      rsvpSubmit:        "Xác nhận tham dự",
+      rsvpSubmitting:    "Đang gửi…",
+      groupTagLabel:     "Nhóm khách",
+      rsvpAgain:         "Đã ghi nhận. Bạn có thể đăng ký thêm người khác ngay bên trên.",
+
+      /* Validation & errors */
+      errNameEmpty:      "Vui lòng nhập họ tên",
+      errNameShort:      "Họ tên quá ngắn",
+      errPhoneEmpty:     "Vui lòng nhập số điện thoại",
+      errPhoneInvalid:   "Số điện thoại phải đủ 10 số",
+      errNetwork:        "Không kết nối được máy chủ. Vui lòng thử lại.",
+      errTimeout:        "Máy chủ phản hồi quá lâu. Vui lòng thử lại.",
+      errServer:         "Có lỗi xảy ra. Vui lòng thử lại sau ít phút.",
+      errNotConfigured:  "Hệ thống đăng ký chưa được cấu hình (GOOGLE_APP_URL).",
+      errFileProtocol:   "Đang mở tệp trực tiếp từ máy nên trình duyệt chặn kết nối máy chủ. Cần đưa web lên host.",
+
+      /* Modal */
+      modalKicker:       "Cảm ơn bạn",
+      modalTitle:        "HẸN GẶP BẠN",
+      modalBody:         "Chúng tôi thực sự hạnh phúc khi được đón bạn trong ngày này.",
+      modalCodeLabel:    "Mã thiệp của bạn",
+      modalUnlockLabel:  "Mật khẩu mở kho kỷ niệm:",
+      modalCopy:         "Sao chép mật khẩu",
+      modalCopied:       "Đã sao chép",
+      modalClose:        "Đóng",
+      modalDemoNote:     "Chế độ xem trước — mã này được tạo ngay trên trình duyệt vì chưa cấu hình GOOGLE_APP_URL.",
+      modalLocalNote:    "Chế độ xem trước — bạn đang mở tệp trực tiếp từ máy nên dữ liệu chưa gửi lên Google Sheet. Đưa web lên host là chạy thật.",
+
+      /* Memory */
+      /* Mừng cưới */
+      giftEyebrow:       "Mừng cưới",
+      giftTitle:         "HỘP MỪNG\nCƯỚI",
+      giftIntro:         "Sự có mặt của bạn đã là món quà lớn nhất. Nếu ở xa không thể đến, đây là cách để bạn gửi lời chúc tới chúng tôi.",
+      giftScanHint:      "Quét mã bằng ứng dụng ngân hàng",
+      giftBankLabel:     "Ngân hàng",
+      giftAccountLabel:  "Số tài khoản",
+      giftCopy:          "Sao chép số tài khoản",
+      giftCopied:        "Đã sao chép",
+      altQrGroom:        "Mã QR chuyển khoản của chú rể",
+      altQrBride:        "Mã QR chuyển khoản của cô dâu",
+
+      memEyebrow:        "Kỷ niệm riêng",
+      memTitle:          "NHỮNG KHOẢNH KHẮC\nRIÊNG TƯ",
+      memIntro:          "Chương này chỉ dành cho những người đã ở đó cùng chúng tôi.",
+      memPassLabel:      "Mật khẩu",
+      memPassPlaceholder:"06/12/2026_XXXXXXXX",
+      memUnlock:         "Mở kho kỷ niệm",
+      memUnlocking:      "Đang mở…",
+      memHint:           "Mật khẩu có dạng 06/12/2026_ kèm mã thiệp của bạn.",
+      memEmpty:          "Vui lòng nhập mật khẩu",
+      memWrong:          "Mật khẩu chưa chính xác",
+      memOutro:          "Cảm ơn vì đã là một phần của câu chuyện này.",
+      memNoCode:         "Bạn chưa có mã thiệp. Mã sẽ được gửi ngay sau khi bạn xác nhận tham dự.",
+      memGoRsvp:         "Xác nhận tham dự để nhận mã →",
+      altMemory:         "Ảnh kỷ niệm",
+      gal1:              "Buổi sáng đầu tiên",
+      gal2:              "Ánh sáng tháng Năm",
+      gal3:              "Một ngày rất thường",
+      gal4:              "Trên đường về",
+      gal5:              "Không ai bấm giờ",
+      gal6:              "Góc quen",
+      gal7:              "Và chúng tôi cười",
+
+      /* Footer */
+      footerThanks:      "Cảm ơn bạn đã dành thời gian đọc đến những dòng cuối cùng.",
+      footerMade:        "Thiệp mời điện tử",
+      footerZalo:        "Liên hệ qua Zalo",
+      footerStatement:   "Trang nhã · Ấm áp · Điện ảnh · Vượt thời gian ·",
+
+      /* Group labels */
+      groupLabels: {
+        "Bạn Chú Rể":        "Bạn Chú Rể",
+        "Gia Đình Nhà Trai": "Gia Đình Nhà Trai",
+        "Bạn Cô Dâu":        "Bạn Cô Dâu",
+        "Gia Đình Nhà Gái":  "Gia Đình Nhà Gái"
+      }
+    },
+
+    en: {
+      lockCorner:        "A private invitation",
+      lockKicker:        "You are warmly invited",
+      lockQuote:         "“Some promises are never said out loud — they simply find the right person, on the right day.”",
+      lockInputLabel:    "Invitation code",
+      lockPlaceholder:   "ENTER YOUR CODE",
+      lockEnter:         "Enter",
+      lockHint:          "Your code was sent together with your invitation",
+      lockBg1:           "Forever · Together ·",
+      lockBg2:           "06 · 12 · 2026 ·",
+      lockBg3:           "A Private Invitation ·",
+      lockEmpty:         "Please enter your invitation code",
+      lockWrong:         "That code isn’t right — please try again",
+      lockCryptoError:   "Couldn’t verify the code right now. Please check your connection and reload.",
+
+      heroKicker:        "Save the date",
+      heroKicker2:       "Sunday · 06.12.2026",
+      heroPlace:         "Cẩm Phả · Quảng Ninh",
+      heroPlaceSub:      "Chapter one",
+      heroMonth:         "December",
+      heroTitle:         "THE BEGINNING\nOF FOREVER",
+      heroSub:           "A story we choose to write together — in light, in quiet, and in a great deal of love.",
+      heroNote:          "We would love to see you on this very particular day.",
+      scroll:            "Scroll",
+      statement:         "A story we choose to write together ·",
+
+      countEyebrow:      "Counting down",
+      countTitle:        "Only a moment\nleft to wait",
+      countNote:         "Counting to 11:30 on Sunday the 06th of December, 2026.",
+      cdDays:            "Days",
+      cdHours:           "Hours",
+      cdMinutes:         "Minutes",
+      cdSeconds:         "Seconds",
+      cdToday:           "Today is our day.",
+
+      coupleEyebrow:     "The Couple",
+      coupleTitle:       "TWO PEOPLE\nONE CHAPTER",
+      coupleIntro:       "Born in the same year, under the same element — they met late enough to know what they wanted, and early enough to have a whole life ahead.",
+      coupleAside:       "Chapter One · 2026",
+      brideRole:         "The Bride",
+      brideDesc:         "She loves early light, the smell of new paper and afternoons with nowhere to be.",
+      brideNote:         "and then everything fell into place",
+      groomRole:         "The Groom",
+      groomDesc:         "Quiet, with a long memory, and always there at exactly the right moment.",
+      groomNote:         "i choose you, every day",
+      altBride:          "Portrait of the bride",
+      altGroom:          "Portrait of the groom",
+
+      dayEyebrow:        "The Day",
+      dayTitle:          "ONE DAY\nOF OUR OWN",
+      dayIntro:          "The ceremony begins at 11:30. Please arrive a few minutes early so we can begin it together.",
+      ev1Title:          "Welcome",
+      ev1Name:           "Welcoming our guests",
+      ev1Desc:           "We will be at the restaurant to greet you.",
+      ev2Title:          "Ceremony",
+      ev2Name:           "The heart of the day",
+      ev2Desc:           "An intimate ceremony with both families and our closest people.",
+      ev3Title:          "Reception",
+      ev3Name:           "A toast together",
+      ev3Desc:           "Lunch, music, and stories with no particular ending time.",
+
+      rsvpEyebrow:       "RSVP",
+      rsvpTitle:         "WILL YOU\nJOIN US?",
+      rsvpLead:          "Confirming helps us keep a seat that fits you perfectly.",
+      rsvpDeadlineLabel: "Kindly reply before",
+      nameLabel:         "Full name",
+      namePlaceholder:   "Your name",
+      phoneLabel:        "Phone number",
+      phonePlaceholder:  "10 digits, e.g. 0912345678",
+      rsvpSubmit:        "Confirm attendance",
+      rsvpSubmitting:    "Sending…",
+      groupTagLabel:     "Guest group",
+      rsvpAgain:         "Noted, thank you. You may register another guest above.",
+
+      errNameEmpty:      "Please enter your name",
+      errNameShort:      "That name looks too short",
+      errPhoneEmpty:     "Please enter your phone number",
+      errPhoneInvalid:   "Phone number must be exactly 10 digits",
+      errNetwork:        "Couldn’t reach the server. Please try again.",
+      errTimeout:        "The server took too long to answer. Please try again.",
+      errServer:         "Something went wrong. Please try again in a moment.",
+      errNotConfigured:  "The registration endpoint isn’t configured yet (GOOGLE_APP_URL).",
+      errFileProtocol:   "The page was opened directly from disk, so the browser blocks the server call. The site needs hosting.",
+
+      modalKicker:       "Thank you",
+      modalTitle:        "SEE YOU THERE",
+      modalBody:         "We are so happy to celebrate this day with you.",
+      modalCodeLabel:    "Your invitation code",
+      modalUnlockLabel:  "Password for the Secret Memory:",
+      modalCopy:         "Copy password",
+      modalCopied:       "Copied",
+      modalClose:        "Close",
+      modalDemoNote:     "Preview mode — this code was generated in the browser because GOOGLE_APP_URL isn’t configured yet.",
+      modalLocalNote:    "Preview mode — you opened the file directly from disk, so nothing was sent to Google Sheets. Host the site to make it live.",
+
+      /* Wedding gift */
+      giftEyebrow:       "Wedding gift",
+      giftTitle:         "A LITTLE\nSOMETHING",
+      giftIntro:         "Your presence is the greatest gift of all. If you cannot be there in person, this is a way to send us your wishes.",
+      giftScanHint:      "Scan with your banking app",
+      giftBankLabel:     "Bank",
+      giftAccountLabel:  "Account number",
+      giftCopy:          "Copy account number",
+      giftCopied:        "Copied",
+      altQrGroom:        "Bank transfer QR code for the groom",
+      altQrBride:        "Bank transfer QR code for the bride",
+
+      memEyebrow:        "Secret Memory",
+      memTitle:          "OUR SECRET\nMEMORIES",
+      memIntro:          "This chapter is only for those who were there with us.",
+      memPassLabel:      "Password",
+      memPassPlaceholder:"06/12/2026_XXXXXXXX",
+      memUnlock:         "Unlock memories",
+      memUnlocking:      "Unlocking…",
+      memHint:           "The password is 06/12/2026_ followed by your invitation code.",
+      memEmpty:          "Please enter the password",
+      memWrong:          "That password isn’t right",
+      memOutro:          "Thank you for being part of this story.",
+      memNoCode:         "You don’t have an invitation code yet. It is issued the moment you confirm your attendance.",
+      memGoRsvp:         "Confirm your attendance to get a code →",
+      altMemory:         "Memory photograph",
+      gal1:              "The first morning",
+      gal2:              "May light",
+      gal3:              "An ordinary day",
+      gal4:              "On the way home",
+      gal5:              "No one was counting",
+      gal6:              "Our corner",
+      gal7:              "And we laughed",
+
+      footerThanks:      "Thank you for reading all the way to the last line.",
+      footerMade:        "Digital invitation",
+      footerZalo:        "Contact via Zalo",
+      footerStatement:   "Elegant · Intimate · Cinematic · Timeless ·",
+
+      groupLabels: {
+        "Bạn Chú Rể":        "Groom’s Friends",
+        "Gia Đình Nhà Trai": "Groom’s Family",
+        "Bạn Cô Dâu":        "Bride’s Friends",
+        "Gia Đình Nhà Gái":  "Bride’s Family"
+      }
+    }
+  };
+
+  /* =====================================================================
+     03 — UTILITIES
+  ===================================================================== */
+
+  const $  = (sel, root) => (root || document).querySelector(sel);
+  const $$ = (sel, root) => Array.prototype.slice.call((root || document).querySelectorAll(sel));
+
+  const prefersReducedMotion = () =>
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const isFinePointer = () =>
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  /* localStorage có thể bị chặn (private mode, iframe) → luôn bọc try/catch */
+  const store = {
+    get(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } },
+    set(key, val) { try { window.localStorage.setItem(key, val); return true; } catch (e) { return false; } },
+    remove(key) { try { window.localStorage.removeItem(key); } catch (e) {} }
+  };
+
+  const state = {
+    lang: "vi",
+    guestGroup: null,
+    isUnlocked: false,
+    isSending: false,
+    lastFocused: null
+  };
+
+  function t(key) {
+    const dict = translations[state.lang] || translations.vi;
+    const val = dict[key];
+    if (typeof val === "string") return val;
+    const fallback = translations.vi[key];
+    return typeof fallback === "string" ? fallback : "";
+  }
+
+  function pad(num, len) {
+    let s = String(Math.max(0, num));
+    while (s.length < len) s = "0" + s;
+    return s;
+  }
+
+  function fetchWithTimeout(url, options, ms) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    return fetch(url, Object.assign({}, options, { signal: controller.signal }))
+      .finally(() => clearTimeout(timer));
+  }
+
+  const isBackendConfigured = () => /^https?:\/\//i.test(GOOGLE_APP_URL);
+
+  /**
+   * Mở bằng file:// thì trình duyệt CHẶN mọi request sang https (origin "null"),
+   * nên không thể gọi Google Apps Script. Khi đó chạy chế độ xem trước:
+   * sinh mã ngay trên máy và mở album đối chiếu cục bộ.
+   * Muốn ghi thật vào Google Sheet thì phải đưa web lên host http(s).
+   */
+  const isLocalFile = () => window.location.protocol === "file:";
+  const useLocalMode = () => !isBackendConfigured() || isLocalFile();
+
+  /**
+   * POST tới Google Apps Script.
+   * Dùng content-type text/plain để tránh CORS preflight (Apps Script không xử lý OPTIONS).
+   */
+  async function postToBackend(payload, ms) {
+    if (!isBackendConfigured()) {
+      const err = new Error("BACKEND_NOT_CONFIGURED");
+      err.code = "not_configured";
+      throw err;
+    }
+    let res;
+    try {
+      res = await fetchWithTimeout(GOOGLE_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+        redirect: "follow"
+      }, ms || WEDDING_CONFIG.timeouts.backend);
+    } catch (e) {
+      const err = new Error("NETWORK");
+      err.code = (e && e.name === "AbortError") ? "timeout" : "network";
+      throw err;
+    }
+    if (!res.ok) {
+      const err = new Error("HTTP_" + res.status);
+      err.code = "server";
+      throw err;
+    }
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      const err = new Error("BAD_JSON");
+      err.code = "server";
+      throw err;
+    }
+  }
+
+  /**
+   * Gửi mà không cần đọc phản hồi (mode "no-cors" / sendBeacon).
+   * Dùng khi trình duyệt chặn đọc kết quả cross-origin: dữ liệu vẫn tới được
+   * Apps Script, chỉ là mình không biết nó trả về gì. An toàn vì payload đã kèm
+   * sẵn `code`, backend nhận trùng mã thì không ghi thêm dòng.
+   */
+  function sendFireAndForget(payload) {
+    const body = JSON.stringify(payload);
+    try {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([body], { type: "text/plain;charset=utf-8" });
+        if (navigator.sendBeacon(GOOGLE_APP_URL, blob)) return true;
+      }
+    } catch (e) {}
+    try {
+      fetch(GOOGLE_APP_URL, {
+        method: "POST", mode: "no-cors", keepalive: true,
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, body: body
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function messageForError(err) {
+    const code = err && err.code;
+    if (code === "timeout")        return t("errTimeout");
+    if (code === "network")        return t("errNetwork");
+    if (code === "not_configured") return t("errNotConfigured");
+    if (isLocalFile())             return t("errFileProtocol");
+    return t("errServer");
+  }
+
+  function setFieldError(fieldEl, errorEl, message) {
+    if (!fieldEl || !errorEl) return;
+    if (message) {
+      fieldEl.classList.add("has-error");
+      errorEl.textContent = message;
+    } else {
+      fieldEl.classList.remove("has-error");
+      errorEl.textContent = "";
+    }
+  }
+
+  function shake(el) {
+    if (!el || prefersReducedMotion()) return;
+    el.classList.remove("shake");
+    void el.offsetWidth;             /* reflow để chạy lại animation */
+    el.classList.add("shake");
+    setTimeout(() => el.classList.remove("shake"), 700);
+  }
+
+  /**
+   * SHA-256 với 2 lớp dự phòng:
+   *  1. Crypto-JS (CDN)
+   *  2. Web Crypto API — dùng khi CDN lỗi (chỉ hoạt động ở https / localhost)
+   * Trả về null nếu không băm được → hiển thị thông báo thay vì im lặng.
+   */
+  async function sha256(value) {
+    if (typeof CryptoJS !== "undefined" && CryptoJS.SHA256) {
+      try { return CryptoJS.SHA256(value).toString(CryptoJS.enc.Hex); } catch (e) {}
+    }
+    if (window.crypto && window.crypto.subtle && window.isSecureContext) {
+      try {
+        const buffer = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+        return Array.prototype.map
+          .call(new Uint8Array(buffer), (b) => b.toString(16).padStart(2, "0"))
+          .join("");
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  /**
+   * Sinh mã thiệp 8 ký tự.
+   *
+   * Ở bản chạy thật, mã do Google Apps Script tạo và lưu vào Sheet (xem apps-script/Code.gs)
+   * — backend trả về trong `uniqueCode`. Hàm này chỉ dùng khi CHƯA cấu hình GOOGLE_APP_URL,
+   * để toàn bộ luồng RSVP → mã → Secret Memory vẫn xem trước được ngay trên trình duyệt.
+   *
+   * Bảng chữ cái bỏ 0/O/1/I/L để khách không đọc nhầm khi gõ lại mật khẩu.
+   */
+  async function generateInvitationCode(seed) {
+    const ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+    const source = String(seed) + "|" + Date.now() + "|" + Math.random();
+    const hash = await sha256(source);
+    let code = "";
+
+    if (hash) {
+      for (let i = 0; i < 8; i += 1) {
+        code += ALPHABET[parseInt(hash.substr(i * 4, 4), 16) % ALPHABET.length];
+      }
+      return code;
+    }
+
+    /* Không băm được → dùng nguồn ngẫu nhiên của trình duyệt */
+    const bytes = new Uint8Array(8);
+    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(bytes);
+    else for (let i = 0; i < 8; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+    for (let i = 0; i < 8; i += 1) code += ALPHABET[bytes[i] % ALPHABET.length];
+    return code;
+  }
+
+  /* =====================================================================
+     04 — CONFIG & IMAGE INJECTION
+  ===================================================================== */
+
+  function applyConfig() {
+    $$("[data-config]").forEach((el) => {
+      const key = el.getAttribute("data-config");
+      if (Object.prototype.hasOwnProperty.call(WEDDING_CONFIG, key)) {
+        el.textContent = WEDDING_CONFIG[key];
+      }
+    });
+
+    const zalo = $("#zaloLink");
+    if (zalo) {
+      zalo.setAttribute("href", "https://zalo.me/" + String(SDO_ZALO).replace(/[^\d+]/g, ""));
+    }
+  }
+
+  /* Ảnh lỗi → thay bằng khung giấy có nhãn, không để layout vỡ */
+  function placeholderDataURI(label) {
+    const svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000">' +
+      '<rect width="800" height="1000" fill="#EFEBE1"/>' +
+      '<rect x="24" y="24" width="752" height="952" fill="none" stroke="#D8D4CA"/>' +
+      '<text x="400" y="500" text-anchor="middle" font-family="Georgia,serif" font-size="34" ' +
+      'letter-spacing="8" fill="#AAB4A8">' + label + "</text></svg>";
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
+
+  /** Đổ thông tin mừng cưới từ WEDDING_CONFIG.gift vào giao diện */
+  function applyGift() {
+    const gift = WEDDING_CONFIG.gift;
+    if (!gift) return;
+
+    [["Groom", gift.groom], ["Bride", gift.bride]].forEach(([key, data]) => {
+      if (!data) return;
+
+      const nameEl = $("#gift" + key + "Name");
+      const bankEl = $("#gift" + key + "Bank");
+      const accEl  = $("#gift" + key + "Account");
+      const img    = $("#gift" + key + "Qr");
+      const btn    = $("#gift" + key + "Copy");
+
+      if (nameEl) nameEl.textContent = data.name || "";
+      if (bankEl) bankEl.textContent = data.bank || "";
+      if (accEl)  accEl.textContent  = data.account || "";
+
+      if (img) {
+        img.addEventListener("error", function onError() {
+          img.removeEventListener("error", onError);
+          img.src = placeholderDataURI("QR");
+        });
+        img.src = data.qr || placeholderDataURI("QR");
+      }
+
+      if (btn && accEl) {
+        btn.addEventListener("click", async () => {
+          const digits = String(data.account || "").replace(/\D/g, "");
+          if (!digits) return;
+          await copyText(digits);
+          const label = btn.querySelector("span");
+          if (!label) return;
+          label.removeAttribute("data-lang");
+          label.textContent = t("giftCopied");
+          window.setTimeout(() => {
+            label.setAttribute("data-lang", "giftCopy");
+            label.textContent = t("giftCopy");
+          }, 2000);
+        });
+      }
+    });
+  }
+
+  /** Bên hiện tại của khách: "groom" | "bride" | null */
+  function currentSide() {
+    const group = state.guestGroup || store.get(STORAGE_KEYS.group);
+    return group && Object.prototype.hasOwnProperty.call(SIDE_BY_GROUP, group)
+      ? SIDE_BY_GROUP[group]
+      : null;
+  }
+
+  /** Tông màu nền theo bên: nhà trai xanh pastel, nhà gái hồng pastel */
+  function applySideTheme() {
+    const side = currentSide();
+    if (side) document.documentElement.setAttribute("data-side", side);
+    else document.documentElement.removeAttribute("data-side");
+  }
+
+  /** Khách bên nào chỉ thấy mã QR của bên đó; mã chủ nhà thấy cả hai */
+  function applyGiftAccess() {
+    const side = currentSide();
+    const cards = {
+      groom: $("#giftGroomName") ? $("#giftGroomName").closest(".gift-card") : null,
+      bride: $("#giftBrideName") ? $("#giftBrideName").closest(".gift-card") : null
+    };
+    if (!cards.groom || !cards.bride) return;
+
+    Object.keys(cards).forEach((key) => {
+      const visible = !side || side === key;
+      cards[key].classList.toggle("hide", !visible);
+      cards[key].classList.toggle("gift-solo", !!side && visible);
+    });
+  }
+
+  /** Sao chép văn bản, có đường lui cho trình duyệt không hỗ trợ Clipboard API */
+  async function copyText(value) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        return true;
+      }
+      throw new Error("no-clipboard");
+    } catch (e) {
+      const helper = document.createElement("textarea");
+      helper.value = value;
+      helper.setAttribute("readonly", "readonly");
+      helper.style.position = "fixed";
+      helper.style.opacity = "0";
+      document.body.appendChild(helper);
+      helper.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch (e2) {}
+      document.body.removeChild(helper);
+      return ok;
+    }
+  }
+
+  function applyImages() {
+    $$("[data-img]").forEach((img) => {
+      const key = img.getAttribute("data-img");
+      const src = WEDDING_CONFIG.images[key];
+      img.addEventListener("error", function onError() {
+        img.removeEventListener("error", onError);
+        img.src = placeholderDataURI("IMAGE");
+      });
+      if (src) img.src = src;
+      else img.src = placeholderDataURI("IMAGE");
+    });
+  }
+
+  /* =====================================================================
+     05 — LANGUAGE SYSTEM
+  ===================================================================== */
+
+  function buildSplit(el, text) {
+    el.textContent = "";
+    const reduce = prefersReducedMotion();
+    const lines = String(text).split("\n");
+    let index = 0;
+
+    lines.forEach((line) => {
+      const lineEl = document.createElement("span");
+      lineEl.className = "split-line";
+      const words = line.split(" ");
+
+      words.forEach((word, wi) => {
+        const unit = document.createElement("span");
+        unit.className = "split-unit";
+        unit.textContent = word + (wi < words.length - 1 ? " " : "");
+        if (!reduce) unit.style.transitionDelay = (index * 0.06).toFixed(2) + "s";
+        index += 1;
+        lineEl.appendChild(unit);
+      });
+
+      el.appendChild(lineEl);
+    });
+  }
+
+  function buildMarquee(trackEl, text) {
+    if (!trackEl) return;
+    trackEl.textContent = "";
+    const chunk = (text + " ").repeat(4);
+    for (let i = 0; i < 2; i += 1) {
+      const span = document.createElement("span");
+      span.textContent = chunk;
+      trackEl.appendChild(span);
+    }
+  }
+
+  function applyLanguage(lang) {
+    state.lang = translations[lang] ? lang : "vi";
+    document.documentElement.setAttribute("lang", state.lang);
+
+    $$("[data-lang]").forEach((el) => {
+      const value = t(el.getAttribute("data-lang"));
+      if (el.hasAttribute("data-split")) buildSplit(el, value);
+      else el.textContent = value;
+    });
+
+    $$("[data-lang-placeholder]").forEach((el) => {
+      el.setAttribute("placeholder", t(el.getAttribute("data-lang-placeholder")));
+    });
+
+    $$("[data-lang-alt]").forEach((el) => {
+      el.setAttribute("alt", t(el.getAttribute("data-lang-alt")));
+    });
+
+    $$("[data-lang-aria]").forEach((el) => {
+      el.setAttribute("aria-label", t(el.getAttribute("data-lang-aria")));
+    });
+
+    buildMarquee($("#statementTrack"), t("statement"));
+    buildMarquee($("#footerTrack"), t("footerStatement"));
+    buildMarquee($("#lockTrack1"), t("lockBg1"));
+    buildMarquee($("#lockTrack2"), t("lockBg2"));
+    buildMarquee($("#lockTrack3"), t("lockBg3"));
+
+    $$("[data-lang-switch]").forEach((btn) => {
+      btn.classList.toggle("is-active", btn.getAttribute("data-lang-switch") === state.lang);
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-lang-switch") === state.lang));
+    });
+
+    renderGuestGroupTag();
+    renderRsvpButtonState();
+    const pair = WEDDING_CONFIG.groomName + " & " + WEDDING_CONFIG.brideName;
+    document.title = pair + (state.lang === "vi"
+      ? " — Thiệp mời cưới 06.12.2026"
+      : " — Wedding Invitation 06.12.2026");
+  }
+
+  function initLanguage() {
+    const preferredLang = store.get(STORAGE_KEYS.lang) || "vi";
+    applyLanguage(preferredLang);
+
+    $$("[data-lang-switch]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const lang = btn.getAttribute("data-lang-switch");
+        if (lang === state.lang) return;
+        store.set(STORAGE_KEYS.lang, lang);
+        applyLanguage(lang);
+      });
+    });
+  }
+
+  function renderGuestGroupTag() {
+    const tag = $("#rsvpGroupTag");
+    if (!tag) return;
+    const group = state.guestGroup || store.get(STORAGE_KEYS.group);
+    if (!group) { tag.textContent = ""; return; }
+    const dict = translations[state.lang] || translations.vi;
+    const label = (dict.groupLabels && dict.groupLabels[group]) || group;
+    tag.textContent = t("groupTagLabel") + " · " + label;
+  }
+
+  /* =====================================================================
+     06 — LOCK SCREEN
+  ===================================================================== */
+
+  function initLockScreen() {
+    const form  = $("#lockForm");
+    const input = $("#lockInput");
+    const field = $("#lockField");
+    const error = $("#lockError");
+    if (!form || !input) return;
+
+    const showError = (message) => {
+      error.textContent = message;
+      error.classList.add("is-on");
+      shake(field);
+    };
+
+    input.addEventListener("input", () => {
+      error.classList.remove("is-on");
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();                       /* không bao giờ reload trang */
+      const raw = input.value.trim();
+
+      if (!raw) { showError(t("lockEmpty")); input.focus(); return; }
+
+      /* Thử cả nguyên bản và bản viết thường để khách không bị lỗi do CAPS LOCK */
+      const candidates = raw === raw.toLowerCase() ? [raw] : [raw, raw.toLowerCase()];
+      let group = null;
+      let hashed = false;
+
+      for (let i = 0; i < candidates.length && !group; i += 1) {
+        const hash = await sha256(candidates[i]);
+        if (hash) hashed = true;
+        if (hash && passwordGroups[hash]) group = passwordGroups[hash];
+      }
+
+      if (!hashed) { showError(t("lockCryptoError")); return; }
+      if (!group) { showError(t("lockWrong")); input.select(); return; }
+
+      state.guestGroup = group;
+      store.set(STORAGE_KEYS.group, group);
+      unlockInvitation();
+    });
+
+    /* Focus vào ô nhập sau khi animation vào xong (bỏ qua trên mobile để không bật bàn phím) */
+    if (isFinePointer()) setTimeout(() => input.focus(), 1200);
+  }
+
+  /**
+   * Mở thiệp mà không phải gõ mã, theo 2 cách:
+   *   1. Địa chỉ có kèm mã — index.html#huyhoang7220 (tiện khi lưu shortcut trên điện thoại)
+   *   2. Thiết bị đã mở thiệp trước đó — WEDDING_CONFIG.rememberUnlock
+   * Trả về true nếu đã mở, để bỏ qua màn khoá.
+   */
+  async function tryAutoUnlock() {
+    const fromHash = decodeURIComponent(String(window.location.hash || "").replace(/^#/, "")).trim();
+
+    if (fromHash) {
+      const hash = await sha256(fromHash.toLowerCase());
+      const group = hash ? passwordGroups[hash] : null;
+      if (group) {
+        state.guestGroup = group;
+        store.set(STORAGE_KEYS.group, group);
+        /* Xoá mã khỏi thanh địa chỉ cho gọn */
+        try { history.replaceState(null, "", window.location.pathname + window.location.search); } catch (e) {}
+        unlockInvitation(true);
+        return true;
+      }
+    }
+
+    if (WEDDING_CONFIG.rememberUnlock && store.get(STORAGE_KEYS.group)) {
+      store.remove(STORAGE_KEYS.memory);      /* xoá cờ cũ nếu thiết bị từng mở album */
+    state.guestGroup = store.get(STORAGE_KEYS.group);
+      unlockInvitation(true);
+      return true;
+    }
+    return false;
+  }
+
+  function unlockInvitation(instant) {
+    if (state.isUnlocked) return;
+    state.isUnlocked = true;
+
+    const lock = $("#lockscreen");
+    const site = $("#site");
+    const header = $("#siteHeader");
+
+    if (lock) lock.classList.add("is-open");
+    document.body.classList.remove("is-locked");
+    if (site) site.removeAttribute("aria-hidden");
+
+    window.scrollTo(0, 0);
+    applySideTheme();
+    applyGiftAccess();
+
+    /* Kích hoạt các hiệu ứng chỉ sau khi mở thiệp */
+    window.setTimeout(() => {
+      if (header) header.classList.add("is-ready");
+      initReveal();
+      initParallax();
+      renderMemoryVisibility();
+    }, (instant || prefersReducedMotion()) ? 0 : 260);
+
+    window.setTimeout(() => {
+      if (lock && lock.parentNode) lock.setAttribute("hidden", "hidden");
+    }, instant ? 0 : 1400);
+
+    renderGuestGroupTag();
+  }
+
+  /* =====================================================================
+     07 — COUNTDOWN
+  ===================================================================== */
+
+  function initCountdown() {
+    const target = new Date(WEDDING_CONFIG.weddingDate).getTime();
+    const els = {
+      days:    $("#cdDays"),
+      hours:   $("#cdHours"),
+      minutes: $("#cdMinutes"),
+      seconds: $("#cdSeconds")
+    };
+    const row = $("#countRow");
+    const message = $("#cdMessage");
+
+    if (!els.days || isNaN(target)) return;
+
+    let timerId = null;
+
+    const tick = () => {
+      const diff = target - Date.now();
+
+      if (diff <= 0) {
+        els.days.textContent    = "0";
+        els.hours.textContent   = pad(0, 2);
+        els.minutes.textContent = pad(0, 2);
+        els.seconds.textContent = pad(0, 2);
+        if (row) row.classList.add("hide");
+        if (message) message.classList.remove("hide");
+        if (timerId) window.clearInterval(timerId);
+        return;
+      }
+
+      const totalSeconds = Math.floor(diff / 1000);
+      els.days.textContent    = String(Math.floor(totalSeconds / 86400));   /* ngày không đệm số 0 */
+      els.hours.textContent   = pad(Math.floor(totalSeconds / 3600) % 24, 2);
+      els.minutes.textContent = pad(Math.floor(totalSeconds / 60) % 60, 2);
+      els.seconds.textContent = pad(totalSeconds % 60, 2);
+    };
+
+    tick();
+    timerId = window.setInterval(tick, 1000);
+
+    /* Tab ẩn → đồng bộ lại ngay khi quay lại */
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) tick();
+    });
+  }
+
+  /* =====================================================================
+     08 — TRẠNG THÁI NÚT RSVP
+     Không kiểm tra IP: khách đăng ký được nhiều lần, mỗi lần là một dòng
+     trong Sheet (một người có thể đăng ký hộ cả nhà).
+  ===================================================================== */
+
+  function renderRsvpButtonState() {
+    const button = $("#rsvpSubmit");
+    const label  = $("#rsvpSubmitText");
+    if (!button || !label) return;
+
+    if (state.isSending) {
+      button.disabled = true;
+      label.removeAttribute("data-lang");
+      label.textContent = t("rsvpSubmitting");
+    } else {
+      button.disabled = false;
+      button.classList.remove("is-disabled");
+      button.style.cursor = "";
+      label.setAttribute("data-lang", "rsvpSubmit");
+      label.textContent = t("rsvpSubmit");
+    }
+  }
+
+  /* =====================================================================
+     09 — RSVP
+  ===================================================================== */
+
+  /**
+   * Chuẩn hoá số điện thoại về dạng 10 số bắt đầu bằng 0.
+   * Bỏ mọi khoảng trắng / dấu chấm / gạch / ngoặc, và quy +84 · 84 về 0.
+   */
+  function normalizePhone(value) {
+    let phone = String(value).replace(/[^\d+]/g, "");
+    phone = phone.replace(/^\+?84/, "0");
+    return phone;
+  }
+
+  /** Hợp lệ khi và chỉ khi đủ đúng 10 chữ số và bắt đầu bằng 0 */
+  function isValidPhone(value) {
+    return /^0\d{9}$/.test(normalizePhone(value));
+  }
+
+  function validateRsvp(name, phone) {
+    let ok = true;
+
+    if (!name) { setFieldError($("#fieldName"), $("#errName"), t("errNameEmpty")); ok = false; }
+    else if (name.length < 2) { setFieldError($("#fieldName"), $("#errName"), t("errNameShort")); ok = false; }
+    else setFieldError($("#fieldName"), $("#errName"), "");
+
+    if (!phone) { setFieldError($("#fieldPhone"), $("#errPhone"), t("errPhoneEmpty")); ok = false; }
+    else if (!isValidPhone(phone)) { setFieldError($("#fieldPhone"), $("#errPhone"), t("errPhoneInvalid")); ok = false; }
+    else setFieldError($("#fieldPhone"), $("#errPhone"), "");
+
+    return ok;
+  }
+
+  function initRSVP() {
+    const form = $("#rsvpForm");
+    if (!form) return;
+
+    /* Label đổi màu khi ô đã có nội dung */
+    $$(".field__input", form).forEach((input) => {
+      const field = input.closest(".field");
+      const sync = () => field && field.classList.toggle("is-filled", input.value.trim() !== "");
+      input.addEventListener("input", sync);
+      input.addEventListener("blur", sync);
+    });
+
+    form.addEventListener("submit", handleRSVP);
+  }
+
+  /* IP công khai của khách — chỉ để ghi vào sheet tham khảo.
+     Không chặn gì cả: lấy được thì gửi, không lấy được thì bỏ qua. */
+  let cachedIP = null;
+  async function fetchGuestIP() {
+    if (cachedIP !== null) return cachedIP;
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 4000);
+      const res = await fetch("https://api.ipify.org?format=json", { signal: ctrl.signal });
+      clearTimeout(timer);
+      const data = await res.json();
+      cachedIP = String(data && data.ip ? data.ip : "").slice(0, 60);
+    } catch (err) {
+      cachedIP = "";
+    }
+    return cachedIP;
+  }
+
+  /* Ghi 1 lượt vào trang vào tab "log ip" — bắn xong là quên, không chặn giao diện,
+     lỗi mạng cũng mặc kệ vì đây chỉ là số liệu theo dõi. */
+  let visitLogged = false;
+  async function logVisit() {
+    if (visitLogged || useLocalMode()) return;
+    visitLogged = true;
+    try {
+      const ip = await fetchGuestIP();
+      const body = JSON.stringify({
+        action: "visit",
+        ip: ip,
+        group: store.get(STORAGE_KEYS.group) || state.guestGroup || ""
+      });
+      fetch(GOOGLE_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: body,
+        keepalive: true
+      }).catch(() => {});
+    } catch (err) { /* im lặng */ }
+  }
+
+  async function handleRSVP(event) {
+    event.preventDefault();
+
+    if (state.isSending) return;
+
+    const nameInput  = $("#rsvpName");
+    const phoneInput = $("#rsvpPhone");
+    const formError  = $("#rsvpFormError");
+    const name  = nameInput ? nameInput.value.trim() : "";
+    const phone = phoneInput ? phoneInput.value.trim() : "";
+
+    if (formError) formError.textContent = "";
+
+    if (!validateRsvp(name, phone)) {
+      shake($("#rsvpForm"));
+      const firstError = $(".field.has-error .field__input");
+      if (firstError) firstError.focus();
+      return;
+    }
+
+    state.isSending = true;
+    renderRsvpButtonState();
+
+    /* Chưa cấu hình backend, hoặc đang mở bằng file:// → chế độ xem trước */
+    if (useLocalMode()) {
+      const code = await generateInvitationCode(name + phone);
+      store.set(STORAGE_KEYS.code, code);
+      state.isSending = false;
+      renderRsvpButtonState();
+      renderMemoryVisibility();
+      showSuccessModal(code, true);
+      return;
+    }
+
+    /* Sinh mã trước rồi gửi kèm → backend nhận trùng mã sẽ không ghi thêm dòng,
+       nhờ vậy lần gửi lại (nếu có) không tạo bản ghi trùng. */
+    const payload = {
+      action: "register",
+      name: name,
+      phone: normalizePhone(phone),
+      group: store.get(STORAGE_KEYS.group) || state.guestGroup || "",
+      code: await generateInvitationCode(name + phone),
+      ip: await fetchGuestIP()
+    };
+
+    try {
+      const data = await postToBackend(payload);
+
+      if (data && data.status === "success" && data.uniqueCode) {
+        store.set(STORAGE_KEYS.code, String(data.uniqueCode));
+        state.isSending = false;
+        renderRsvpButtonState();
+        renderMemoryVisibility();
+        showSuccessModal(String(data.uniqueCode));
+      } else {
+        state.isSending = false;
+        renderRsvpButtonState();
+        if (formError) formError.textContent = (data && data.message) ? data.message : t("errServer");
+        shake($("#rsvpForm"));
+      }
+    } catch (err) {
+      /* Không đọc được phản hồi (thường do trình duyệt chặn cross-origin).
+         Vẫn gửi lần nữa kiểu không chờ trả lời — dữ liệu tới sheet, và vì đã kèm
+         sẵn mã nên không sinh dòng trùng. */
+      const sent = (err && err.code === "network") ? sendFireAndForget(payload) : false;
+      state.isSending = false;
+      renderRsvpButtonState();
+
+      if (sent) {
+        store.set(STORAGE_KEYS.code, payload.code);
+        renderMemoryVisibility();
+        showSuccessModal(payload.code);
+        return;
+      }
+
+      if (formError) formError.textContent = messageForError(err);
+      shake($("#rsvpForm"));
+    }
+  }
+
+  /* =====================================================================
+     10 — SUCCESS MODAL
+  ===================================================================== */
+
+  function memoryPasswordFor(code) {
+    return WEDDING_CONFIG.weddingDateDisplay + "_" + code;
+  }
+
+  function showSuccessModal(code, isPreviewMode) {
+    const modal = $("#successModal");
+    if (!modal) return;
+
+    const codeEl = $("#uniqueCode");
+    const preview = $("#memoryPasswordPreview");
+    const demoNote = $("#modalDemoNote");
+    if (codeEl) codeEl.textContent = code;
+    if (preview) preview.textContent = memoryPasswordFor(code);
+    if (demoNote) {
+      demoNote.classList.toggle("hide", !isPreviewMode);
+      if (isPreviewMode) {
+        demoNote.removeAttribute("data-lang");
+        demoNote.textContent = t(isLocalFile() ? "modalLocalNote" : "modalDemoNote");
+      }
+    }
+
+    state.lastFocused = document.activeElement;
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+
+    const focusable = $$("button, [href], input", modal).filter((el) => !el.disabled);
+    if (focusable.length) focusable[focusable.length - 1].focus();
+  }
+
+  function closeSuccessModal() {
+    const modal = $("#successModal");
+    if (!modal || !modal.classList.contains("is-open")) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    /* Reload để website khởi động lại ở trạng thái “đã đăng ký” */
+    window.setTimeout(() => window.location.reload(), 420);
+  }
+
+  function initModals() {
+    const modal = $("#successModal");
+    if (!modal) return;
+
+    $$("[data-modal-close]", modal).forEach((el) => {
+      el.addEventListener("click", closeSuccessModal);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      if (modal.classList.contains("is-open")) closeSuccessModal();
+    });
+
+    /* Focus trap đơn giản */
+    modal.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const focusable = $$("button, [href], input", modal).filter((el) => !el.disabled);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+
+    /* Sao chép mật khẩu mở album — dùng chung hàm copyText */
+    const copyBtn   = $("#copyCodeBtn");
+    const copyLabel = $("#copyCodeText");
+    if (copyBtn && copyLabel) {
+      copyBtn.addEventListener("click", async () => {
+        const preview = $("#memoryPasswordPreview");
+        const value = preview ? preview.textContent : "";
+        if (!value) return;
+        await copyText(value);
+        copyLabel.removeAttribute("data-lang");
+        copyLabel.textContent = t("modalCopied");
+        window.setTimeout(() => {
+          copyLabel.setAttribute("data-lang", "modalCopy");
+          copyLabel.textContent = t("modalCopy");
+        }, 2000);
+      });
+    }
+  }
+
+  /* =====================================================================
+     11 — SECRET MEMORY
+  ===================================================================== */
+
+  function renderMemoryVisibility() {
+    const section = $("#memorySection");
+    if (!section) return;
+
+    const hasCode = !!store.get(STORAGE_KEYS.code);
+    const visible = WEDDING_CONFIG.alwaysShowMemory || hasCode;
+    section.classList.toggle("is-visible", visible);
+
+    /* Chưa có mã → chỉ dẫn khách quay lại RSVP thay vì để họ bối rối */
+    const needsCode = $("#memoryNeedsCode");
+    if (needsCode) needsCode.classList.toggle("hide", hasCode);
+
+    const againNote = $("#rsvpAgainNote");
+    if (againNote) againNote.classList.toggle("hide", !hasCode);
+
+    /* Không nhớ trạng thái mở album: mỗi phiên phải nhập lại mật khẩu */
+  }
+
+  function revealGallery(animate) {
+    const lockPanel = $("#memoryLock");
+    const gallery = $("#memoryGallery");
+    if (!gallery) return;
+
+    if (lockPanel) lockPanel.classList.add("hide");
+    gallery.classList.remove("hide");
+
+    if (animate === false || prefersReducedMotion()) {
+      $$("[data-rv]", gallery).forEach((el) => el.classList.add("rv-in"));
+      return;
+    }
+    $$("[data-rv]", gallery).forEach((el, i) => {
+      window.setTimeout(() => el.classList.add("rv-in"), 90 * i);
+    });
+    gallery.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function initMemoryUnlock() {
+    const form = $("#memoryForm");
+    if (!form) return;
+
+    const input = $("#memoryInput");
+    $$(".field__input", form).forEach((el) => {
+      const field = el.closest(".field");
+      el.addEventListener("input", () => {
+        if (field) field.classList.toggle("is-filled", el.value.trim() !== "");
+        setFieldError($("#fieldMemory"), $("#errMemory"), "");
+      });
+    });
+
+    form.addEventListener("submit", unlockMemories);
+    if (input) input.setAttribute("placeholder", t("memPassPlaceholder"));
+  }
+
+  async function unlockMemories(event) {
+    event.preventDefault();
+
+    const input = $("#memoryInput");
+    const button = $("#memorySubmit");
+    const label = $("#memorySubmitText");
+    const password = input ? input.value.trim() : "";
+
+    if (!password) {
+      setFieldError($("#fieldMemory"), $("#errMemory"), t("memEmpty"));
+      shake($("#fieldMemory"));
+      if (input) input.focus();
+      return;
+    }
+
+    if (button) button.disabled = true;
+    if (label) { label.removeAttribute("data-lang"); label.textContent = t("memUnlocking"); }
+
+    const finish = () => {
+      if (button) button.disabled = false;
+      if (label) { label.setAttribute("data-lang", "memUnlock"); label.textContent = t("memUnlock"); }
+    };
+
+    /* Chế độ xem trước → đối chiếu cục bộ với mã đã lưu */
+    if (useLocalMode()) {
+      const localCode = store.get(STORAGE_KEYS.code);
+      finish();
+      if (localCode && password === memoryPasswordFor(localCode)) {
+        revealGallery(true);
+      } else {
+        setFieldError($("#fieldMemory"), $("#errMemory"), t("memWrong"));
+        shake($("#fieldMemory"));
+      }
+      return;
+    }
+
+    try {
+      const data = await postToBackend({ action: "unlock", password: password });
+      finish();
+      if (data && data.status === "success") {
+        setFieldError($("#fieldMemory"), $("#errMemory"), "");
+        revealGallery(true);
+      } else {
+        setFieldError($("#fieldMemory"), $("#errMemory"), (data && data.message) ? data.message : t("memWrong"));
+        shake($("#fieldMemory"));
+      }
+    } catch (err) {
+      finish();
+      setFieldError($("#fieldMemory"), $("#errMemory"), messageForError(err));
+      shake($("#fieldMemory"));
+    }
+  }
+
+  /* =====================================================================
+     12 — ANIMATION SYSTEM
+  ===================================================================== */
+
+  function initReveal() {
+    const items = $$("[data-rv]").filter((el) => !el.closest("#memoryGallery"));
+
+    if (!("IntersectionObserver" in window) || prefersReducedMotion()) {
+      items.forEach((el) => el.classList.add("rv-in"));
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("rv-in");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: "0px 0px -6% 0px" });
+
+    items.forEach((el) => observer.observe(el));
+  }
+
+  function initParallax() {
+    if (prefersReducedMotion()) return;
+    const layers = $$(".parallax");
+    if (!layers.length) return;
+
+    let ticking = false;
+
+    const update = () => {
+      const y = window.scrollY || window.pageYOffset;
+      const enabled = window.innerWidth >= 900;
+      layers.forEach((el) => {
+        if (!enabled) { el.style.transform = ""; return; }
+        const speed = parseFloat(el.getAttribute("data-speed")) || 0;
+        el.style.transform = "translate3d(0," + (y * speed).toFixed(2) + "px,0)";
+      });
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+
+  function initHeader() {
+    const header = $("#siteHeader");
+    if (!header) return;
+
+    let lastY = 0;
+    let ticking = false;
+
+    const update = () => {
+      const y = window.scrollY || window.pageYOffset;
+      header.classList.toggle("is-solid", y > 90);
+      lastY = y;
+      ticking = false;
+    };
+
+    window.addEventListener("scroll", () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }, { passive: true });
+  }
+
+  function initCursor() {
+    if (!isFinePointer() || prefersReducedMotion()) return;
+
+    const ring = $(".cursor");
+    const dot  = $(".cursor-dot");
+    if (!ring || !dot) return;
+
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let ringX = mouseX, ringY = mouseY;
+
+    document.addEventListener("mousemove", (event) => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+      dot.style.transform = "translate3d(" + (mouseX - 2) + "px," + (mouseY - 2) + "px,0)";
+      ring.classList.add("is-on");
+      dot.classList.add("is-on");
+    }, { passive: true });
+
+    document.addEventListener("mouseleave", () => {
+      ring.classList.remove("is-on");
+      dot.classList.remove("is-on");
+    });
+
+    const loop = () => {
+      ringX += (mouseX - ringX) * 0.14;
+      ringY += (mouseY - ringY) * 0.14;
+      const size = ring.classList.contains("is-hover") ? 31 : 17;
+      ring.style.transform = "translate3d(" + (ringX - size) + "px," + (ringY - size) + "px,0)";
+      window.requestAnimationFrame(loop);
+    };
+    loop();
+
+    const hoverTargets = "a, button, input, .polaroid, .img-hover";
+    document.addEventListener("mouseover", (event) => {
+      if (event.target.closest && event.target.closest(hoverTargets)) ring.classList.add("is-hover");
+    });
+    document.addEventListener("mouseout", (event) => {
+      if (event.target.closest && event.target.closest(hoverTargets)) ring.classList.remove("is-hover");
+    });
+  }
+
+  function initMagnetic() {
+    if (!isFinePointer() || prefersReducedMotion()) return;
+
+    $$(".magnetic").forEach((el) => {
+      el.addEventListener("mousemove", (event) => {
+        const rect = el.getBoundingClientRect();
+        const x = event.clientX - rect.left - rect.width / 2;
+        const y = event.clientY - rect.top - rect.height / 2;
+        el.style.transform = "translate3d(" + (x * 0.12).toFixed(2) + "px," + (y * 0.18).toFixed(2) + "px,0)";
+      });
+      el.addEventListener("mouseleave", () => { el.style.transform = ""; });
+    });
+  }
+
+  /* =====================================================================
+     13 — INIT
+  ===================================================================== */
+
+  function init() {
+    applyConfig();
+    applyImages();
+    applyGift();
+    initLanguage();
+    initLockScreen();
+    initCountdown();
+    initRSVP();
+    initMemoryUnlock();
+    initModals();
+    initHeader();
+    initCursor();
+    initMagnetic();
+
+    store.remove(STORAGE_KEYS.memory);      /* xoá cờ cũ nếu thiết bị từng mở album */
+    state.guestGroup = store.get(STORAGE_KEYS.group);
+    renderGuestGroupTag();
+    renderMemoryVisibility();
+    applySideTheme();
+    applyGiftAccess();
+    tryAutoUnlock().catch(() => {});
+    logVisit();
+
+    /* Dán mã vào thanh địa chỉ khi trang đang mở → mở luôn, không cần tải lại */
+    window.addEventListener("hashchange", () => {
+      if (!state.isUnlocked) tryAutoUnlock().catch(() => {});
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  /* Không để bất kỳ lỗi nào làm trắng màn hình */
+  window.addEventListener("error", (event) => {
+    if (window.console && console.warn) console.warn("[invitation]", event.message);
+  });
+})();
+</script>
+</body>
+</html>
