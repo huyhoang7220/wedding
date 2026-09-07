@@ -411,7 +411,8 @@ a{color:inherit;text-decoration:none}
   opacity:0;transform:translateX(-8px);pointer-events:none;
   transition:opacity .5s var(--ease),transform .5s var(--ease);
 }
-.music-dock.is-playing .music-meta{opacity:1;transform:none}
+.music-dock.is-ready .music-meta{opacity:1;transform:none}
+.music-dock:not(.is-playing) .music-eq{display:none}
 .music-meta__title{
   font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
   color:var(--ink-mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -424,7 +425,26 @@ a{color:inherit;text-decoration:none}
 @keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
 .music-eq i{transform-origin:bottom}
 
-#scFrame{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9999px;top:0}
+/* Bảng phát thật của SoundCloud — chỉ bung ra khi trình duyệt chặn tiếng,
+   để khách chạm thẳng vào nút phát bên trong khung (cách duy nhất chạy trên điện thoại) */
+.music-panel{
+  position:fixed;z-index:69;
+  left:max(16px,env(safe-area-inset-left,0px));
+  bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 68px);
+  width:min(320px,78vw);border-radius:14px;overflow:hidden;
+  border:1px solid var(--line-soft);background:var(--ivory);
+  box-shadow:var(--shadow-soft);
+  opacity:0;transform:translateY(12px) scale(.96);pointer-events:none;
+  transition:opacity .45s var(--ease),transform .45s var(--ease);
+}
+.music-panel.is-open{opacity:1;transform:none;pointer-events:auto}
+.music-panel[hidden]{display:none}
+.music-panel__hint{
+  display:block;padding:11px 13px 7px;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-mid);
+}
+#scFrame{display:block;width:100%;height:120px;border:0}
 
 @media (max-width:520px){
   .music-disc{width:48px;height:48px}
@@ -1730,6 +1750,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       memUnlocking:      "Đang mở…",
       musicPlay:         "Bật nhạc nền",
       musicPause:        "Tắt nhạc nền",
+      musicTapToPlay:    "Chạm để bật nhạc",
+      musicPanelHint:    "Bấm nút phát bên dưới",
       memHint:           "Mật khẩu có dạng 06/12/2026_ kèm mã thiệp của bạn.",
       memEmpty:          "Vui lòng nhập mật khẩu",
       memWrong:          "Mật khẩu chưa chính xác",
@@ -1876,6 +1898,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       memUnlocking:      "Unlocking…",
       musicPlay:         "Play music",
       musicPause:        "Pause music",
+      musicTapToPlay:    "Tap to play music",
+      musicPanelHint:    "Press play below",
       memHint:           "The password is 06/12/2026_ followed by your invitation code.",
       memEmpty:          "Please enter the password",
       memWrong:          "That password isn’t right",
@@ -3152,9 +3176,32 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     const dock   = $("#musicDock");
     const button = $("#musicToggle");
     const label  = $("#musicToggleLabel");
+    const title  = $("#musicTitle");
     if (dock)   dock.classList.toggle("is-playing", music.playing);
     if (button) button.setAttribute("aria-pressed", music.playing ? "true" : "false");
     if (label)  label.textContent = t(music.playing ? "musicPause" : "musicPlay");
+    /* Đang phát thì khoe tên bài, chưa phát thì mời khách chạm */
+    if (title)  title.textContent = music.playing ? (music.title || "") : t("musicTapToPlay");
+    if (music.playing) closeMusicPanel();
+  }
+
+  /* Bảng phát thật của SoundCloud — lối thoát khi trình duyệt chặn tiếng */
+  function openMusicPanel() {
+    const panel = $("#musicPanel");
+    const hint  = $("#musicPanelHint");
+    if (!panel) return;
+    if (hint) hint.textContent = t("musicPanelHint");
+    panel.removeAttribute("hidden");
+    requestAnimationFrame(() => panel.classList.add("is-open"));
+  }
+
+  function closeMusicPanel() {
+    const panel = $("#musicPanel");
+    if (!panel) return;
+    panel.classList.remove("is-open");
+    window.setTimeout(() => {
+      if (!panel.classList.contains("is-open")) panel.setAttribute("hidden", "hidden");
+    }, 450);
   }
 
   function hideMusicDock() {
@@ -3162,9 +3209,25 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     if (dock) { dock.classList.remove("is-ready", "is-playing"); dock.setAttribute("hidden", "hidden"); }
   }
 
-  function toggleMusic() {
-    if (!music.widget) { prepareMusic().then(() => { if (music.widget) music.widget.toggle(); }); return; }
-    try { music.widget.toggle(); } catch (err) {}
+  /**
+   * Đang phát → tạm dừng (lệnh này trình duyệt luôn cho).
+   * Chưa phát → thử ra lệnh phát; nếu sau một nhịp ngắn vẫn im, tức là trình
+   * duyệt điện thoại đã chặn, lúc đó bung bảng phát thật của SoundCloud để
+   * khách chạm thẳng vào nút phát bên trong khung.
+   */
+  async function toggleMusic() {
+    if (!music.widget) {
+      const ok = await prepareMusic();
+      if (!ok) { openMusicPanel(); return; }
+    }
+
+    if (music.playing) {
+      try { music.widget.pause(); } catch (err) {}
+      return;
+    }
+
+    try { music.widget.play(); } catch (err) {}
+    window.setTimeout(() => { if (!music.playing) openMusicPanel(); }, 700);
   }
 
   /**
@@ -3180,8 +3243,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     const track = trackForSide();
     if (!track || !track.trackId) return;
 
-    const title = $("#musicTitle");
-    if (title) title.textContent = track.title || "";
+    music.title = track.title || "";
 
     const dock = $("#musicDock");
     if (dock) {
@@ -3283,7 +3345,11 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     <span class="music-meta__title" id="musicTitle"></span>
   </div>
 </div>
-<iframe id="scFrame" title="SoundCloud player" allow="autoplay" scrolling="no" frameborder="no"></iframe>
+<div id="musicPanel" class="music-panel" hidden>
+  <span class="music-panel__hint" id="musicPanelHint"></span>
+  <iframe id="scFrame" title="SoundCloud player"
+          allow="autoplay; encrypted-media" scrolling="no" frameborder="no"></iframe>
+</div>
 
 </body>
 </html>
