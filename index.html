@@ -364,24 +364,27 @@ a{color:inherit;text-decoration:none}
 .music-dock[hidden]{display:none}
 .music-disc{
   position:relative;flex:0 0 auto;width:54px;height:54px;padding:0;
-  border-radius:50%;border:1px solid rgba(44,48,46,.22);background:#141210;
+  border-radius:50%;border:1px solid rgba(250,248,242,.28);
+  background:rgba(30,28,25,.52);backdrop-filter:blur(7px) saturate(1.15);
   cursor:pointer;overflow:hidden;display:grid;place-items:center;
-  box-shadow:0 12px 30px -10px rgba(44,48,46,.55);
-  transition:transform .5s var(--ease),box-shadow .5s var(--ease);
+  box-shadow:0 10px 26px -12px rgba(44,48,46,.45);
+  opacity:.72;
+  transition:transform .5s var(--ease),opacity .5s var(--ease),box-shadow .5s var(--ease);
 }
-.music-disc:hover,.music-disc:focus-visible{transform:scale(1.06)}
+.music-disc:hover,.music-disc:focus-visible{transform:scale(1.06);opacity:1}
+.music-dock.is-playing .music-disc{opacity:.95}
 .music-disc__art{
   position:absolute;inset:0;border-radius:50%;
   background:
-    repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.06) 0 1px,transparent 1px 4px),
-    radial-gradient(circle at 34% 28%,#403a35,#131110 64%);
+    repeating-radial-gradient(circle at 50% 50%,rgba(250,248,242,.10) 0 1px,transparent 1px 4px),
+    radial-gradient(circle at 34% 28%,rgba(96,88,79,.75),rgba(22,20,18,.85) 64%);
   animation:discSpin 6.5s linear infinite;animation-play-state:paused;
 }
 .music-dock.is-playing .music-disc__art{animation-play-state:running}
 @keyframes discSpin{to{transform:rotate(360deg)}}
 .music-disc__label{
   position:relative;z-index:2;width:20px;height:20px;border-radius:50%;
-  background:var(--champagne);color:#20241f;
+  background:rgba(200,184,154,.92);color:#20241f;
   display:grid;place-items:center;
   font-size:7px;font-weight:700;letter-spacing:.02em;line-height:1;
   box-shadow:0 0 0 1px rgba(0,0,0,.28) inset;
@@ -425,26 +428,7 @@ a{color:inherit;text-decoration:none}
 @keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
 .music-eq i{transform-origin:bottom}
 
-/* Bảng phát thật của SoundCloud — chỉ bung ra khi trình duyệt chặn tiếng,
-   để khách chạm thẳng vào nút phát bên trong khung (cách duy nhất chạy trên điện thoại) */
-.music-panel{
-  position:fixed;z-index:69;
-  left:max(16px,env(safe-area-inset-left,0px));
-  bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 68px);
-  width:min(320px,78vw);border-radius:14px;overflow:hidden;
-  border:1px solid var(--line-soft);background:var(--ivory);
-  box-shadow:var(--shadow-soft);
-  opacity:0;transform:translateY(12px) scale(.96);pointer-events:none;
-  transition:opacity .45s var(--ease),transform .45s var(--ease);
-}
-.music-panel.is-open{opacity:1;transform:none;pointer-events:auto}
-.music-panel[hidden]{display:none}
-.music-panel__hint{
-  display:block;padding:11px 13px 7px;
-  font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
-  color:var(--ink-mid);
-}
-#scFrame{display:block;width:100%;height:120px;border:0}
+#bgAudio{display:none}
 
 @media (max-width:520px){
   .music-disc{width:48px;height:48px}
@@ -757,9 +741,47 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   text-align:center;box-shadow:var(--shadow-soft);
 }
 .gift-qr{
+  position:relative;
   width:min(250px,64vw);aspect-ratio:1;margin:clamp(18px,4vw,26px) auto clamp(14px,3vw,20px);
   background:#fff;border:1px solid var(--line-soft);padding:10px;
 }
+/* Quầng sáng xoay chậm quanh mã. Xoay cái quầng chứ không xoay mã: khách còn
+   phải giơ camera lên quét chuyển tiền, mã mà nhúc nhích là quét rất vất. */
+.gift-qr::before{
+  content:"";position:absolute;z-index:-1;inset:-13px;pointer-events:none;
+  background:conic-gradient(from 0turn,
+    rgba(200,184,154,0)   0turn,
+    rgba(200,184,154,.85) .12turn,
+    rgba(200,184,154,.30) .26turn,
+    rgba(200,184,154,0)   .46turn,
+    rgba(200,184,154,0)   1turn);
+  filter:blur(7px);
+  animation:qrOrbit 16s linear infinite;
+}
+/* Viền mảnh thở nhẹ — phần "nhấp nháy", nằm ngoài mã nên không ăn vào độ tương phản */
+.gift-qr::after{
+  content:"";position:absolute;inset:-7px;pointer-events:none;
+  border:1px solid rgba(200,184,154,.8);
+  animation:qrBreath 3.8s var(--ease) infinite;
+}
+@keyframes qrOrbit{to{transform:rotate(1turn)}}
+@keyframes qrBreath{
+  0%,100%{opacity:.22;transform:scale(1)}
+  50%    {opacity:.88;transform:scale(1.025)}
+}
+@media (prefers-reduced-motion:reduce){
+  .gift-qr::before{animation:none;opacity:.5}
+  .gift-qr::after{animation:none;opacity:.55}
+}
+/* Khách tự tắt hiệu ứng — nhớ lại cho lần sau vào */
+:root[data-qrfx="off"] .gift-qr::before{animation:none;opacity:0}
+:root[data-qrfx="off"] .gift-qr::after{animation:none;opacity:.32}
+.fx-chip__dot{
+  width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:var(--champagne);
+  animation:qrBreath 3.8s var(--ease) infinite;
+}
+:root[data-qrfx="off"] .fx-chip__dot{animation:none;opacity:.4;background:var(--ink-30)}
+@media (prefers-reduced-motion:reduce){ .fx-chip__dot{animation:none} }
 .gift-qr img{width:100%;height:100%;object-fit:contain}   /* không phủ filter film — QR phải sắc nét */
 .gift-acc{
   font-family:"Playfair Display",Georgia,serif;font-weight:700;
@@ -1299,6 +1321,11 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
         <div class="md:col-span-4 md:col-start-9">
           <div class="rule-soft" style="margin-bottom:16px"></div>
           <p class="body-sm" data-lang="giftIntro"></p>
+          <button type="button" id="qrFxToggle" class="copy-chip fx-chip magnetic"
+                  style="margin-top:16px" aria-pressed="true">
+            <span class="fx-chip__dot" aria-hidden="true"></span>
+            <span id="qrFxToggleText" data-lang="qrFxStop"></span>
+          </button>
         </div>
       </div>
 
@@ -1552,13 +1579,13 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 
     /* true  = luôn hiện chương Secret Memory ở trạng thái đã khoá (khách biết là có album)
        false = chỉ hiện sau khi khách RSVP và đã có mã */
-    /* Nhạc nền — phát qua trình phát chính thức của SoundCloud (nhúng, không tải về).
-       Đổi bài: mở link SoundCloud, lấy id trong thẻ og:url (soundcloud://sounds:<id>). */
+    /* Nhạc nền — file đặt cùng thư mục assets, nên bấm mở thiệp là phát được ngay.
+       Đổi bài: chép file mới vào assets rồi sửa đúng tên ở đây. */
     music: {
-      groom:   { trackId: "2332724474", title: "Đừng Đóng Vai Anh" },
-      bride:   { trackId: "27803131",   title: "Beautiful In White" },
+      groom:   { src: "assets/nhac-nha-trai.mp3", title: "Đừng Đóng Vai Anh" },
+      bride:   { src: "assets/nhac-nha-gai.mp3",  title: "Beautiful In White" },
       fallback: "bride",          /* mã Cô Dâu & Chú Rể / không rõ bên → dùng bài này */
-      volume: 65,
+      volume: 55,                 /* 0–100, nhạc nền nên nhỏ hơn tiếng nói */
       autoplayOnUnlock: true
     },
     alwaysShowMemory: true,
@@ -1617,7 +1644,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     group:  "guestGroup",
     rsvp:   "rsvpDone",
     code:   "invitationCode",
-    memory: "memoryUnlocked"   /* chỉ dùng để dọn cờ cũ — không lưu mới nữa */
+    memory: "memoryUnlocked",  /* chỉ dùng để dọn cờ cũ — không lưu mới nữa */
+    qrfx:   "qrEffects"
   };
 
   /* =====================================================================
@@ -1751,7 +1779,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       musicPlay:         "Bật nhạc nền",
       musicPause:        "Tắt nhạc nền",
       musicTapToPlay:    "Chạm để bật nhạc",
-      musicPanelHint:    "Bấm nút phát bên dưới",
+      qrFxStop:          "Tắt hiệu ứng mã QR",
+      qrFxStart:         "Bật hiệu ứng mã QR",
       memHint:           "Mật khẩu có dạng 06/12/2026_ kèm mã thiệp của bạn.",
       memEmpty:          "Vui lòng nhập mật khẩu",
       memWrong:          "Mật khẩu chưa chính xác",
@@ -1899,7 +1928,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       musicPlay:         "Play music",
       musicPause:        "Pause music",
       musicTapToPlay:    "Tap to play music",
-      musicPanelHint:    "Press play below",
+      qrFxStop:          "Turn off QR effect",
+      qrFxStart:         "Turn on QR effect",
       memHint:           "The password is 06/12/2026_ followed by your invitation code.",
       memEmpty:          "Please enter the password",
       memWrong:          "That password isn’t right",
@@ -3096,7 +3126,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
      Nhà trai và nhà gái nghe hai bài khác nhau, theo mã thiệp đã nhập.
   ===================================================================== */
 
-  const music = { widget: null, ready: false, playing: false, track: null, loading: null };
+  const music = { el: null, title: "", src: "", fade: null, everPlayed: false, volumeOk: null };
 
   function musicConfig() {
     return (WEDDING_CONFIG && WEDDING_CONFIG.music) || null;
@@ -3110,98 +3140,101 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     return cfg[side] || cfg[cfg.fallback] || null;
   }
 
-  /** Nạp API widget của SoundCloud một lần, hỏng thì thôi, không làm gì vỡ */
-  function loadWidgetApi() {
-    if (window.SC && window.SC.Widget) return Promise.resolve(true);
-    if (music.loading) return music.loading;
+  function targetVolume() {
+    const cfg = musicConfig();
+    const v = cfg && typeof cfg.volume === "number" ? cfg.volume : 55;
+    return Math.min(1, Math.max(0, v / 100));
+  }
 
-    music.loading = new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://w.soundcloud.com/player/api.js";
-      script.async = true;
-      script.onload  = () => resolve(!!(window.SC && window.SC.Widget));
-      script.onerror = () => resolve(false);
-      document.head.appendChild(script);
-      /* Mạng chậm hoặc bị chặn → bỏ qua nhạc, không treo giao diện */
-      setTimeout(() => resolve(!!(window.SC && window.SC.Widget)), 8000);
+  /**
+   * iOS không cho trang tự chỉnh âm lượng — gán vào là bị bỏ qua. Phải dò một
+   * lần rồi nhớ lấy, nếu không sẽ có lúc để nhạc mắc kẹt ở mức 0 và khách tưởng
+   * là hỏng.
+   */
+  function volumeIsWritable(el) {
+    if (music.volumeOk !== null) return music.volumeOk;
+    try {
+      const before = el.volume;
+      el.volume = 0.123;
+      music.volumeOk = Math.abs(el.volume - 0.123) < 0.01;
+      el.volume = before;
+    } catch (err) {
+      music.volumeOk = false;
+    }
+    return music.volumeOk;
+  }
+
+  /** Thẻ audio dùng chung, gắn sự kiện đúng một lần */
+  function audioEl() {
+    if (music.el) return music.el;
+    const el = $("#bgAudio");
+    if (!el) return null;
+
+    music.el = el;
+    el.loop = true;
+
+    el.addEventListener("play",  renderMusicState);
+    el.addEventListener("pause", renderMusicState);
+    el.addEventListener("ended", renderMusicState);
+    /* "playing" mới là lúc tiếng thật sự ra loa — "play" chỉ là lúc ra lệnh,
+       file hỏng hay sai tên vẫn bắn "play" nên không dùng để kết luận được. */
+    el.addEventListener("playing", () => { music.everPlayed = true; renderMusicState(); });
+
+    /**
+     * Lỗi tải nhạc (mạng chập chờn, khách đi thang máy…) KHÔNG được giấu đĩa đi,
+     * vì giấu rồi thì khách không còn gì để bấm lại. Chỉ giấu khi ngay từ đầu đã
+     * không phát nổi lần nào — lúc đó gần như chắc là sai tên file.
+     */
+    el.addEventListener("error", () => {
+      if (music.everPlayed) renderMusicState();
+      else hideMusicDock();
     });
-    return music.loading;
+
+    return el;
   }
 
-  function trackUrl(id) {
-    return "https://w.soundcloud.com/player/?url=" +
-      encodeURIComponent("https://api.soundcloud.com/tracks/" + id) +
-      "&auto_play=false&hide_related=true&show_comments=false&show_user=false" +
-      "&show_teaser=false&visual=false&single_active=false";
-  }
+  /** Vào ra êm, không đập thẳng vào tai khách */
+  function fadeVolume(to, ms, done) {
+    const el = music.el;
+    if (!el) return;
+    if (music.fade) { clearInterval(music.fade); music.fade = null; }
 
-  /** Nạp sẵn iframe + API ngay từ màn khoá, để lúc mở thiệp bấm phát được luôn */
-  async function prepareMusic() {
-    const cfg   = musicConfig();
-    const frame = $("#scFrame");
-    if (!cfg || !frame) return false;
-
-    const track = trackForSide();
-    if (!track || !track.trackId) return false;
-
-    if (!frame.src) {
-      music.track = track.trackId;
-      frame.src = trackUrl(track.trackId);
+    if (!volumeIsWritable(el) || prefersReducedMotion() || !ms) {
+      if (volumeIsWritable(el)) el.volume = to;
+      if (done) done();
+      return;
     }
 
-    const ok = await loadWidgetApi();
-    if (!ok) return false;
-
-    if (!music.widget) {
-      try { music.widget = window.SC.Widget(frame); } catch (err) { return false; }
-
-      const Events = window.SC.Widget.Events;
-      music.widget.bind(Events.READY, () => {
-        music.ready = true;
-        try { music.widget.setVolume(cfg.volume || 65); } catch (err) {}
-      });
-      music.widget.bind(Events.PLAY,   () => renderMusicState(true));
-      music.widget.bind(Events.PAUSE,  () => renderMusicState(false));
-      music.widget.bind(Events.FINISH, () => {
-        /* Nghe hết bài thì quay lại từ đầu, cưới mà im lặng thì kỳ */
-        try { music.widget.seekTo(0); music.widget.play(); } catch (err) {}
-      });
-      music.widget.bind(Events.ERROR,  () => hideMusicDock());
-    }
-    return true;
+    const from = el.volume;
+    const started = Date.now();
+    music.fade = window.setInterval(() => {
+      const k = Math.min(1, (Date.now() - started) / ms);
+      el.volume = Math.min(1, Math.max(0, from + (to - from) * k));
+      if (k >= 1) {
+        clearInterval(music.fade);
+        music.fade = null;
+        if (done) done();
+      }
+    }, 40);
   }
 
-  function renderMusicState(playing) {
-    music.playing = !!playing;
+  /** Trạng thái luôn đọc thẳng từ thẻ audio — biến nhớ rất dễ lệch với thực tế */
+  function isMusicPlaying() {
+    const el = music.el;
+    return !!(el && !el.paused && !el.ended);
+  }
+
+  function renderMusicState() {
+    const playing = isMusicPlaying();
     const dock   = $("#musicDock");
     const button = $("#musicToggle");
     const label  = $("#musicToggleLabel");
     const title  = $("#musicTitle");
-    if (dock)   dock.classList.toggle("is-playing", music.playing);
-    if (button) button.setAttribute("aria-pressed", music.playing ? "true" : "false");
-    if (label)  label.textContent = t(music.playing ? "musicPause" : "musicPlay");
+    if (dock)   dock.classList.toggle("is-playing", playing);
+    if (button) button.setAttribute("aria-pressed", playing ? "true" : "false");
+    if (label)  label.textContent = t(playing ? "musicPause" : "musicPlay");
     /* Đang phát thì khoe tên bài, chưa phát thì mời khách chạm */
-    if (title)  title.textContent = music.playing ? (music.title || "") : t("musicTapToPlay");
-    if (music.playing) closeMusicPanel();
-  }
-
-  /* Bảng phát thật của SoundCloud — lối thoát khi trình duyệt chặn tiếng */
-  function openMusicPanel() {
-    const panel = $("#musicPanel");
-    const hint  = $("#musicPanelHint");
-    if (!panel) return;
-    if (hint) hint.textContent = t("musicPanelHint");
-    panel.removeAttribute("hidden");
-    requestAnimationFrame(() => panel.classList.add("is-open"));
-  }
-
-  function closeMusicPanel() {
-    const panel = $("#musicPanel");
-    if (!panel) return;
-    panel.classList.remove("is-open");
-    window.setTimeout(() => {
-      if (!panel.classList.contains("is-open")) panel.setAttribute("hidden", "hidden");
-    }, 450);
+    if (title)  title.textContent = playing ? (music.title || "") : t("musicTapToPlay");
   }
 
   function hideMusicDock() {
@@ -3209,79 +3242,116 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     if (dock) { dock.classList.remove("is-ready", "is-playing"); dock.setAttribute("hidden", "hidden"); }
   }
 
-  /**
-   * Đang phát → tạm dừng (lệnh này trình duyệt luôn cho).
-   * Chưa phát → thử ra lệnh phát; nếu sau một nhịp ngắn vẫn im, tức là trình
-   * duyệt điện thoại đã chặn, lúc đó bung bảng phát thật của SoundCloud để
-   * khách chạm thẳng vào nút phát bên trong khung.
-   */
-  async function toggleMusic() {
-    if (!music.widget) {
-      const ok = await prepareMusic();
-      if (!ok) { openMusicPanel(); return; }
+  async function playMusic() {
+    const el = audioEl();
+    if (!el) return false;
+
+    /* Lần trước tải hỏng → nạp lại từ đầu, không thì bấm mấy cũng nằm im */
+    if (el.error && music.src) {
+      el.src = encodeURI(music.src);
+      try { el.load(); } catch (err) {}
     }
 
-    if (music.playing) {
-      try { music.widget.pause(); } catch (err) {}
-      return;
-    }
+    const target = targetVolume();
+    const canFade = volumeIsWritable(el);
 
-    try { music.widget.play(); } catch (err) {}
-    window.setTimeout(() => { if (!music.playing) openMusicPanel(); }, 700);
+    try {
+      if (canFade) el.volume = 0;
+      await el.play();
+      if (canFade) fadeVolume(target, 1500);
+      return true;
+    } catch (err) {
+      /* Trình duyệt chặn → trả âm lượng về mức thường, để lần bấm sau không câm */
+      if (canFade) el.volume = target;
+      renderMusicState();
+      return false;
+    }
+  }
+
+  function pauseMusic() {
+    const el = music.el;
+    if (!el) return;
+    if (!volumeIsWritable(el)) { try { el.pause(); } catch (err) {} return; }
+    fadeVolume(0, 420, () => {
+      try { el.pause(); } catch (err) {}
+      el.volume = targetVolume();
+    });
+  }
+
+  function toggleMusic() {
+    if (!audioEl()) return;
+    if (isMusicPlaying()) pauseMusic();
+    else playMusic();
   }
 
   /**
-   * Gọi ngay trong lúc khách vừa bấm "Mở thiệp" — đó là thao tác thật của người
-   * dùng nên trình duyệt điện thoại mới cho phép phát tiếng.
-   * Vào bằng link có sẵn mã thì trình duyệt sẽ chặn: khi đó đĩa nhạc vẫn hiện và
-   * nhấp nháy nhẹ, khách bấm một cái là chạy.
+   * Gọi ngay trong lúc khách vừa bấm "Mở thiệp" — đó là thao tác tay thật nên
+   * trình duyệt điện thoại cho phép phát tiếng. Nhạc nằm cùng nơi với thiệp
+   * (thư mục assets) nên không bị chặn như khi nhúng trình phát của trang khác.
    */
   async function startMusic(userGesture) {
     const cfg = musicConfig();
     if (!cfg) return;
 
     const track = trackForSide();
-    if (!track || !track.trackId) return;
+    if (!track || !track.src) return;
+
+    const el = audioEl();
+    if (!el) return;
 
     music.title = track.title || "";
+
+    if (music.src !== track.src) {
+      music.src = track.src;
+      el.src = encodeURI(track.src);
+    }
 
     const dock = $("#musicDock");
     if (dock) {
       dock.removeAttribute("hidden");
       requestAnimationFrame(() => dock.classList.add("is-ready"));
     }
-    renderMusicState(false);
+    renderMusicState();
 
-    const ok = await prepareMusic();
-    if (!ok) { hideMusicDock(); return; }
+    if (userGesture && cfg.autoplayOnUnlock !== false) await playMusic();
+  }
 
-    const wantsPlay = userGesture && cfg.autoplayOnUnlock !== false;
+  /* =====================================================================
+     15 — HIỆU ỨNG MÃ QR
+     Quầng sáng xoay và viền nhấp nháy nằm NGOÀI mã, mã luôn đứng yên và giữ
+     nguyên độ tương phản để camera quét được. Khách thấy rối thì tắt đi.
+  ===================================================================== */
 
-    /* Đổi bài bằng load() chứ không gán lại src: giữ được iframe cũ nên thao tác
-       chạm của khách vẫn còn hiệu lực, điện thoại mới chịu phát tiếng. */
-    if (music.track !== track.trackId) {
-      music.track = track.trackId;
-      try {
-        music.widget.load("https://api.soundcloud.com/tracks/" + track.trackId, {
-          auto_play: !!wantsPlay,
-          show_comments: false,
-          show_user: false,
-          hide_related: true,
-          callback: () => {
-            try { music.widget.setVolume(cfg.volume || 65); } catch (err) {}
-          }
-        });
-      } catch (err) {}
-      return;
+  function renderQrFx() {
+    const off = store.get(STORAGE_KEYS.qrfx) === "off";
+    document.documentElement.setAttribute("data-qrfx", off ? "off" : "on");
+
+    const button = $("#qrFxToggle");
+    const label  = $("#qrFxToggleText");
+    if (button) button.setAttribute("aria-pressed", off ? "false" : "true");
+    if (label) {
+      const key = off ? "qrFxStart" : "qrFxStop";
+      label.setAttribute("data-lang", key);   /* đổi ngôn ngữ vẫn dịch đúng */
+      label.textContent = t(key);
     }
+  }
 
-    if (wantsPlay) { try { music.widget.play(); } catch (err) {} }
+  function initQrFx() {
+    const button = $("#qrFxToggle");
+    if (button) {
+      button.addEventListener("click", () => {
+        const off = store.get(STORAGE_KEYS.qrfx) === "off";
+        store.set(STORAGE_KEYS.qrfx, off ? "on" : "off");
+        renderQrFx();
+      });
+    }
+    renderQrFx();
   }
 
   function initMusic() {
     const button = $("#musicToggle");
     if (button) button.addEventListener("click", toggleMusic);
-    renderMusicState(false);
+    renderMusicState();
   }
 
   function init() {
@@ -3296,6 +3366,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     initModals();
     initHeader();
     initMusic();
+    initQrFx();
     initCursor();
     initMagnetic();
 
@@ -3307,8 +3378,6 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     applyGiftAccess();
     tryAutoUnlock().catch(() => {});
     logVisit();
-    /* Nạp sẵn trình phát ngay từ màn khoá để lúc mở thiệp bấm phát được luôn */
-    prepareMusic().catch(() => {});
 
     /* Dán mã vào thanh địa chỉ khi trang đang mở → mở luôn, không cần tải lại */
     window.addEventListener("hashchange", () => {
@@ -3345,11 +3414,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     <span class="music-meta__title" id="musicTitle"></span>
   </div>
 </div>
-<div id="musicPanel" class="music-panel" hidden>
-  <span class="music-panel__hint" id="musicPanelHint"></span>
-  <iframe id="scFrame" title="SoundCloud player"
-          allow="autoplay; encrypted-media" scrolling="no" frameborder="no"></iframe>
-</div>
+<audio id="bgAudio" loop preload="none" playsinline></audio>
 
 </body>
 </html>
