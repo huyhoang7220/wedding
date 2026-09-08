@@ -46,6 +46,11 @@ var LOG_COL = { stt: 1, ip: 2, visits: 3, registers: 4, opens: 5,
                 first: 6, last: 7, group: 8, guests: 9 };
 var UNKNOWN_IP = '(không rõ)';
 
+/** Tab sổ lưu bút — lời chúc khách gửi, KHÔNG hiện công khai trên thiệp */
+var WISH_TAB = 'lời chúc';
+var WISH_HEADERS = ['STT', 'Thời gian', 'Họ tên', 'Lời chúc', 'Nhóm khách', 'Mã thiệp', 'IP'];
+var WISH_COL = { stt: 1, time: 2, name: 3, text: 4, group: 5, code: 6, ip: 7 };
+
 var WEDDING_DATE = '06/12/2026';   // phải khớp weddingDateDisplay ở frontend
 var CODE_LENGTH  = 8;
 var ALPHABET     = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';   // bỏ 0 O 1 I L cho dễ đọc
@@ -62,6 +67,7 @@ function doPost(e) {
       case 'register': return json(handleRegister(body));
       case 'unlock':   return json(handleUnlock(body));
       case 'visit':    return json(handleVisit(body));
+      case 'wish':     return json(handleWish(body));
       default:         return json({ status: 'error', message: 'Unknown action' });
     }
   } catch (err) {
@@ -176,6 +182,72 @@ function handleUnlock(body) {
 function handleVisit(body) {
   touchIp(body.ip, 'visit', '', body.group);
   return { status: 'success' };
+}
+
+/**
+ * { action:'wish', name, message, group, code, ip } → { status }
+ * Mỗi lời chúc một dòng. Không chặn trùng: khách muốn viết mấy lần cũng được.
+ */
+function handleWish(body) {
+  var message = trim(body.message);
+  if (!message) return { status: 'error', message: 'Chưa có lời chúc / Empty message' };
+
+  var name = trim(body.name) || '(không để tên)';
+  message  = message.slice(0, 1000);          // chặn ai đó dán cả quyển sách vào
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var sheet = wishSheet();
+    var stt   = sheet.getLastRow();
+
+    var row = [];
+    row[WISH_COL.stt   - 1] = stt;
+    row[WISH_COL.time  - 1] = new Date();
+    row[WISH_COL.name  - 1] = name;
+    row[WISH_COL.text  - 1] = message;
+    row[WISH_COL.group - 1] = trim(body.group) || '(không rõ)';
+    row[WISH_COL.code  - 1] = trim(body.code);
+    row[WISH_COL.ip    - 1] = trim(body.ip).slice(0, 60) || UNKNOWN_IP;
+    sheet.appendRow(row);
+
+    sheet.getRange(sheet.getLastRow(), WISH_COL.time).setNumberFormat(DATETIME_FORMAT);
+    return { status: 'success' };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** Tab `lời chúc` — tiêu đề riêng, ô lời chúc để xuống dòng và bọc chữ */
+function wishSheet() {
+  var ss = book();
+  var sheets = ss.getSheets();
+  var sheet = null;
+
+  for (var i = 0; i < sheets.length; i++) {
+    if (normalize(sheets[i].getName()) === normalize(WISH_TAB)) { sheet = sheets[i]; break; }
+  }
+  if (!sheet) sheet = ss.insertSheet(WISH_TAB);
+
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, WISH_HEADERS.length).setValues([WISH_HEADERS])
+         .setFontWeight('bold').setBackground('#F1EDE4');
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(WISH_COL.stt, 50);
+    sheet.setColumnWidth(WISH_COL.time, 160);
+    sheet.setColumnWidth(WISH_COL.name, 190);
+    sheet.setColumnWidth(WISH_COL.text, 460);
+    sheet.setColumnWidth(WISH_COL.group, 160);
+    sheet.setColumnWidth(WISH_COL.code, 110);
+    sheet.setColumnWidth(WISH_COL.ip, 130);
+
+    var rows = sheet.getMaxRows() - 1;
+    if (rows > 0) {
+      sheet.getRange(2, WISH_COL.time, rows, 1).setNumberFormat(DATETIME_FORMAT);
+      sheet.getRange(2, WISH_COL.text, rows, 1).setWrap(true).setVerticalAlignment('top');
+    }
+  }
+  return sheet;
 }
 
 /* ================================================================== */
@@ -432,6 +504,7 @@ function setupSheet() {
   var names = tabNames();
   for (var i = 0; i < names.length; i++) tab(names[i]);
   logSheet();
+  wishSheet();
   Logger.log('Đã chuẩn bị xong các tab: ' + names.join(', '));
 }
 
