@@ -323,14 +323,16 @@ a{color:inherit;text-decoration:none}
   padding:16px 34px;min-height:52px;
   font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
   border:1.5px solid var(--charcoal);color:var(--charcoal);
-  background:transparent;overflow:hidden;isolation:isolate;
+  background:transparent;overflow:visible;isolation:isolate;
   transition:color .55s var(--ease),border-color .55s var(--ease),opacity .3s;
 }
 .btn::before{
   content:"";position:absolute;inset:0;z-index:-1;background:var(--charcoal);
-  transform:translate3d(0,101%,0);transition:transform .62s var(--ease);
+  /* Dâng lên bằng scaleY chứ không trượt từ ngoài vào — nhờ vậy nút không cần
+     overflow:hidden, và các ngôi sao lấp lánh mới thò ra ngoài viền được. */
+  transform:scaleY(0);transform-origin:bottom;transition:transform .62s var(--ease);
 }
-.btn:hover::before,.btn:focus-visible::before{transform:translate3d(0,0,0)}
+.btn:hover::before,.btn:focus-visible::before{transform:scaleY(1)}
 .btn:hover,.btn:focus-visible{color:var(--ivory)}
 .btn--sage{border-color:var(--deep-sage);color:var(--deep-sage)}
 .btn--sage::before{background:var(--deep-sage)}
@@ -341,6 +343,31 @@ a{color:inherit;text-decoration:none}
   background:rgba(216,212,202,.5);
 }
 .btn[disabled]::before,.btn.is-disabled::before{display:none}
+
+/* ===== Ngôi sao lấp lánh quanh nút ===== */
+.spark{
+  position:absolute;pointer-events:none;z-index:3;
+  width:var(--sz,13px);height:var(--sz,13px);
+  opacity:0;transform:scale(.2) rotate(0deg);
+  animation:sparkTwinkle 3.4s var(--ease) infinite;
+  animation-delay:var(--dl,0s);
+}
+.spark svg{width:100%;height:100%;display:block;fill:var(--champagne)}
+.spark--1{top:-9px;left:-7px;--sz:14px;--dl:0s}
+.spark--2{top:-6px;right:10%;--sz:9px;--dl:1.1s}
+.spark--3{bottom:-8px;right:-6px;--sz:12px;--dl:2.2s}
+@keyframes sparkTwinkle{
+  0%,72%,100%{opacity:0;transform:scale(.2) rotate(0deg)}
+  12%        {opacity:1;transform:scale(1) rotate(35deg)}
+  30%        {opacity:.25;transform:scale(.72) rotate(70deg)}
+  46%        {opacity:.9;transform:scale(.95) rotate(105deg)}
+}
+/* Rê chuột / chạm vào thì lấp lánh dồn dập hơn */
+.btn:hover .spark,.btn:focus-visible .spark,
+.copy-chip:hover .spark,.copy-chip:focus-visible .spark{animation-duration:1.5s}
+.btn[disabled] .spark,.btn.is-disabled .spark,.btn.is-busy .spark{display:none}
+.copy-chip{position:relative;overflow:visible}
+@media (prefers-reduced-motion:reduce){ .spark{animation:none;opacity:.55;transform:scale(.85)} }
 
 /* ===== Nút đang xử lý — vòng xoay mảnh, nút không đổi kích thước ===== */
 .btn__spin{
@@ -611,19 +638,13 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   font-size:clamp(2.5rem,7.8vw,5.4rem);line-height:.94;letter-spacing:-.02em;font-weight:500;
 }
 /* Dòng thông tin đầu hero: điện thoại xếp dọc, canh trái cho đỡ lủng củng */
-.hero__meta{top:clamp(86px,12vh,140px)}
-.hero__meta > div{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
-.hero__meta .hero__meta-right{text-align:left}
 @media(min-width:768px){
-  .hero__meta > div{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:24px}
-  .hero__meta .hero__meta-right{text-align:right}
 }
 
 /* Màn hình rất nhỏ / rất thấp (iPhone SE…): nén hero để luôn vừa 1 màn */
 @media (max-width:359.98px),(max-height:679.98px){
   .display-xl{font-size:clamp(2.2rem,9.6vw,2.9rem)}
   .hero__num{font-size:clamp(2.1rem,7.4vw,2.9rem)}
-  .hero__meta{display:none}          /* thông tin đã có trong hàng ngày tháng bên dưới */
   .hero .serif-lead{font-size:1rem;line-height:1.45}
   .hero__inner .body-sm{display:none}
   .hero__inner{padding-bottom:20px!important}
@@ -749,6 +770,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
    phải giơ camera lên quét chuyển tiền, mã mà nhúc nhích là quét rất vất. */
 .gift-qr::before{
   content:"";position:absolute;z-index:-1;inset:-13px;pointer-events:none;
+  opacity:0;transition:opacity 1.4s var(--ease);
   background:conic-gradient(from 0turn,
     rgba(200,184,154,0)   0turn,
     rgba(200,184,154,.85) .12turn,
@@ -762,7 +784,79 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 .gift-qr::after{
   content:"";position:absolute;inset:-7px;pointer-events:none;
   border:1px solid rgba(200,184,154,.8);
+  opacity:0;transition:opacity 1.4s var(--ease);
   animation:qrBreath 3.8s var(--ease) infinite;
+}
+/* Quầng sáng và viền chỉ sống dậy sau khi khách mở mã */
+.gift-qr.is-open::before,.gift-qr.is-open::after{opacity:1}
+
+/* --- Lớp che mã --- */
+.gift-qr img{
+  filter:blur(10px);opacity:.3;transform:scale(1.05);
+  transition:filter 1.1s var(--ease),opacity 1.1s var(--ease),transform 1.4s var(--ease);
+}
+.gift-qr.is-open img{filter:none;opacity:1;transform:none}
+
+.qr-veil{
+  position:absolute;inset:0;z-index:4;padding:0;border:0;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  background:linear-gradient(145deg,rgba(244,241,234,.97),rgba(228,222,209,.99));
+  overflow:hidden;
+  transition:opacity 1s var(--ease),transform 1s var(--ease),visibility 1s;
+}
+.gift-qr.is-open .qr-veil{opacity:0;visibility:hidden;transform:scale(1.12);pointer-events:none}
+
+/* Vệt sáng quét chậm trên lớp che, tạo cảm giác có gì đó đang chờ bên dưới */
+.qr-veil__shine{
+  position:absolute;inset:-40%;
+  background:conic-gradient(from 0turn,
+    rgba(255,255,255,0) 0turn,
+    rgba(255,255,255,.85) .1turn,
+    rgba(200,184,154,.35) .2turn,
+    rgba(255,255,255,0) .42turn,
+    rgba(255,255,255,0) 1turn);
+  animation:qrOrbit 7s linear infinite;
+}
+.qr-veil__seal{
+  position:relative;display:grid;place-items:center;
+  width:62px;height:62px;border-radius:50%;
+  border:1px solid rgba(200,184,154,.9);
+  font-family:"Playfair Display",Georgia,serif;font-size:15px;letter-spacing:.04em;
+  color:var(--ink-mid);background:rgba(250,248,242,.75);
+  animation:qrBreath 3.2s var(--ease) infinite;
+}
+.qr-veil__hint{
+  position:relative;
+  font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-mid);
+}
+
+/* Số tài khoản cũng giấu cùng mã QR, mở bằng đúng một cú chạm.
+   Đây là hiệu ứng trình bày chứ không phải bảo mật — số vẫn nằm trong mã nguồn trang. */
+.gift-secret{transition:filter 1.1s var(--ease),opacity 1.1s var(--ease)}
+.gift-card:not(.is-open) .gift-secret{
+  filter:blur(7px);opacity:.42;user-select:none;cursor:pointer;
+}
+.gift-card:not(.is-open) .gift-secret > *{pointer-events:none}
+.gift-card.is-open .gift-secret{filter:none;opacity:1}
+@media (prefers-reduced-motion:reduce){
+  .gift-card:not(.is-open) .gift-secret{filter:none;opacity:.18}
+}
+
+/* Sao bắn ra lúc mở mã */
+.qr-burst{
+  position:absolute;left:var(--x,50%);top:var(--y,50%);z-index:5;pointer-events:none;
+  width:var(--sz,12px);height:var(--sz,12px);margin:calc(var(--sz,12px) / -2);
+  opacity:0;animation:qrBurst 1.5s var(--ease) forwards;animation-delay:var(--dl,0s);
+}
+.qr-burst svg{width:100%;height:100%;display:block;fill:var(--champagne)}
+@keyframes qrBurst{
+  0%  {opacity:0;transform:scale(.1) rotate(0deg)}
+  35% {opacity:1;transform:scale(1.15) rotate(70deg)}
+  100%{opacity:0;transform:scale(.35) rotate(150deg) translateY(-16px)}
+}
+@media (prefers-reduced-motion:reduce){
+  .qr-veil__shine,.qr-veil__seal{animation:none}
 }
 @keyframes qrOrbit{to{transform:rotate(1turn)}}
 @keyframes qrBreath{
@@ -773,15 +867,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   .gift-qr::before{animation:none;opacity:.5}
   .gift-qr::after{animation:none;opacity:.55}
 }
-/* Khách tự tắt hiệu ứng — nhớ lại cho lần sau vào */
-:root[data-qrfx="off"] .gift-qr::before{animation:none;opacity:0}
-:root[data-qrfx="off"] .gift-qr::after{animation:none;opacity:.32}
-.fx-chip__dot{
-  width:7px;height:7px;border-radius:50%;flex:0 0 auto;background:var(--champagne);
-  animation:qrBreath 3.8s var(--ease) infinite;
-}
-:root[data-qrfx="off"] .fx-chip__dot{animation:none;opacity:.4;background:var(--ink-30)}
-@media (prefers-reduced-motion:reduce){ .fx-chip__dot{animation:none} }
+
 .gift-qr img{width:100%;height:100%;object-fit:contain}   /* không phủ filter film — QR phải sắc nét */
 .gift-acc{
   font-family:"Playfair Display",Georgia,serif;font-weight:700;
@@ -1015,19 +1101,6 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
           style="bottom:26vh;right:-6vw;font-size:clamp(4rem,17vw,15rem);font-style:italic">Amour</span>
 
     <!-- Top meta bar -->
-    <div class="hero__meta shell absolute left-0 right-0 z-[2]">
-      <div>
-        <div data-rv="up">
-          <p class="eyebrow" data-lang="heroKicker"></p>
-          <p class="eyebrow" style="margin-top:6px;color:var(--ink-30)" data-lang="heroKicker2"></p>
-        </div>
-        <div class="hero__meta-right" data-rv="up" style="transition-delay:.12s">
-          <p class="eyebrow" data-lang="heroPlace"></p>
-          <p class="eyebrow" style="margin-top:6px;color:var(--ink-30)" data-lang="heroPlaceSub"></p>
-        </div>
-      </div>
-    </div>
-
     <!-- Hero content -->
     <div class="hero__inner shell" style="padding-bottom:clamp(28px,7vh,72px)">
 
@@ -1321,11 +1394,6 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
         <div class="md:col-span-4 md:col-start-9">
           <div class="rule-soft" style="margin-bottom:16px"></div>
           <p class="body-sm" data-lang="giftIntro"></p>
-          <button type="button" id="qrFxToggle" class="copy-chip fx-chip magnetic"
-                  style="margin-top:16px" aria-pressed="true">
-            <span class="fx-chip__dot" aria-hidden="true"></span>
-            <span id="qrFxToggleText" data-lang="qrFxStop"></span>
-          </button>
         </div>
       </div>
 
@@ -1338,8 +1406,14 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
           <span class="gift-divider" aria-hidden="true"></span>
           <div class="gift-qr">
             <img id="giftGroomQr" data-lang-alt="altQrGroom" loading="lazy" decoding="async" />
+            <button type="button" class="qr-veil">
+              <span class="qr-veil__shine" aria-hidden="true"></span>
+              <span class="qr-veil__seal" aria-hidden="true">H&amp;L</span>
+              <span class="qr-veil__hint" data-lang="qrReveal"></span>
+            </button>
           </div>
           <p class="meta" data-lang="giftScanHint"></p>
+          <div class="gift-secret">
           <p class="meta" style="margin-top:16px" data-lang="giftBankLabel"></p>
           <p class="body-sm" id="giftGroomBank" style="margin-top:2px">TPBank</p>
           <p class="meta" style="margin-top:14px" data-lang="giftAccountLabel"></p>
@@ -1347,6 +1421,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
           <button type="button" class="copy-chip magnetic" id="giftGroomCopy" style="margin-top:16px">
             <span data-lang="giftCopy"></span>
           </button>
+          </div>
         </article>
 
         <!-- Cô dâu -->
@@ -1356,8 +1431,14 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
           <span class="gift-divider" aria-hidden="true"></span>
           <div class="gift-qr">
             <img id="giftBrideQr" data-lang-alt="altQrBride" loading="lazy" decoding="async" />
+            <button type="button" class="qr-veil">
+              <span class="qr-veil__shine" aria-hidden="true"></span>
+              <span class="qr-veil__seal" aria-hidden="true">H&amp;L</span>
+              <span class="qr-veil__hint" data-lang="qrReveal"></span>
+            </button>
           </div>
           <p class="meta" data-lang="giftScanHint"></p>
+          <div class="gift-secret">
           <p class="meta" style="margin-top:16px" data-lang="giftBankLabel"></p>
           <p class="body-sm" id="giftBrideBank" style="margin-top:2px">TPBank</p>
           <p class="meta" style="margin-top:14px" data-lang="giftAccountLabel"></p>
@@ -1365,6 +1446,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
           <button type="button" class="copy-chip magnetic" id="giftBrideCopy" style="margin-top:16px">
             <span data-lang="giftCopy"></span>
           </button>
+          </div>
         </article>
       </div>
     </div>
@@ -1481,7 +1563,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       <div class="footer-grid grid md:grid-cols-12 gap-y-8 items-end">
         <div class="md:col-span-5">
           <p class="display-m footer-names">
-            <span data-config="groomName">Bùi Huy Hoàng</span><span class="amp">&amp;</span><span data-config="brideName">Ngô Kiều Loan</span>
+            <span data-config="groomShort">Huy Hoàng</span><span class="amp">&amp;</span><span data-config="brideShort">Kiều Loan</span>
           </p>
           <p class="meta" style="margin-top:12px" data-config="weddingDateDisplay"></p>
         </div>
@@ -1552,6 +1634,9 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   const WEDDING_CONFIG = {
     brideName:          "Ngô Kiều Loan",
     groomName:          "Bùi Huy Hoàng",
+    /* Tên gọn dùng ở chân trang cho đỡ nặng nề — chỗ khác vẫn để tên đầy đủ */
+    brideShort:         "Kiều Loan",
+    groomShort:         "Huy Hoàng",
     brideInitial:       "L",
     groomInitial:       "H",
     weddingDate:        "2026-12-06T11:30:00",   /* đếm ngược tới đúng giờ làm lễ */
@@ -1644,8 +1729,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     group:  "guestGroup",
     rsvp:   "rsvpDone",
     code:   "invitationCode",
-    memory: "memoryUnlocked",  /* chỉ dùng để dọn cờ cũ — không lưu mới nữa */
-    qrfx:   "qrEffects"
+    memory: "memoryUnlocked"   /* chỉ dùng để dọn cờ cũ — không lưu mới nữa */
   };
 
   /* =====================================================================
@@ -1779,8 +1863,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       musicPlay:         "Bật nhạc nền",
       musicPause:        "Tắt nhạc nền",
       musicTapToPlay:    "Chạm để bật nhạc",
-      qrFxStop:          "Tắt hiệu ứng mã QR",
-      qrFxStart:         "Bật hiệu ứng mã QR",
+      qrReveal:          "Chạm để mở",
       memHint:           "Mật khẩu có dạng 06/12/2026_ kèm mã thiệp của bạn.",
       memEmpty:          "Vui lòng nhập mật khẩu",
       memWrong:          "Mật khẩu chưa chính xác",
@@ -1928,8 +2011,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       musicPlay:         "Play music",
       musicPause:        "Pause music",
       musicTapToPlay:    "Tap to play music",
-      qrFxStop:          "Turn off QR effect",
-      qrFxStart:         "Turn on QR effect",
+      qrReveal:          "Tap to reveal",
       memHint:           "The password is 06/12/2026_ followed by your invitation code.",
       memEmpty:          "Please enter the password",
       memWrong:          "That password isn’t right",
@@ -2503,7 +2585,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     document.body.classList.remove("is-locked");
     if (site) site.removeAttribute("aria-hidden");
 
-    window.scrollTo(0, 0);
+    syncHeaderHeight();
+    forceScrollTop();
     applySideTheme();
     applyGiftAccess();
     /* instant = vào bằng link/ghi nhớ, không phải thao tác tay → trình duyệt sẽ chặn tiếng */
@@ -3317,35 +3400,99 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   }
 
   /* =====================================================================
-     15 — HIỆU ỨNG MÃ QR
-     Quầng sáng xoay và viền nhấp nháy nằm NGOÀI mã, mã luôn đứng yên và giữ
-     nguyên độ tương phản để camera quét được. Khách thấy rối thì tắt đi.
+     15 — MÃ QR: LỚP CHE VÀ HIỆU ỨNG MỞ
+     Mã bị che lúc đầu, khách chạm vào thì lớp che tan ra. Mở rồi là mở luôn,
+     không đóng lại — khách còn phải giơ camera lên quét, đóng lại là phiền.
   ===================================================================== */
 
-  function renderQrFx() {
-    const off = store.get(STORAGE_KEYS.qrfx) === "off";
-    document.documentElement.setAttribute("data-qrfx", off ? "off" : "on");
+  const STAR_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.6 6.3 5.1 10.8 12 12-6.9 1.2-11.4 5.7-12 12-.6-6.3-5.1-10.8-12-12C6.9 10.8 11.4 6.3 12 0z"/></svg>';
 
-    const button = $("#qrFxToggle");
-    const label  = $("#qrFxToggleText");
-    if (button) button.setAttribute("aria-pressed", off ? "false" : "true");
-    if (label) {
-      const key = off ? "qrFxStart" : "qrFxStop";
-      label.setAttribute("data-lang", key);   /* đổi ngôn ngữ vẫn dịch đúng */
-      label.textContent = t(key);
+  /** Rắc một nắm sao lấp lánh trong khung mã, xong thì tự dọn */
+  function burstSparkles(box) {
+    if (prefersReducedMotion()) return;
+    for (let i = 0; i < 12; i += 1) {
+      const star = document.createElement("span");
+      star.className = "qr-burst";
+      star.setAttribute("aria-hidden", "true");
+      star.style.setProperty("--x", (8 + Math.random() * 84) + "%");
+      star.style.setProperty("--y", (8 + Math.random() * 84) + "%");
+      star.style.setProperty("--dl", (Math.random() * 0.45).toFixed(2) + "s");
+      star.style.setProperty("--sz", (9 + Math.random() * 10).toFixed(0) + "px");
+      star.innerHTML = STAR_SVG;
+      box.appendChild(star);
+      window.setTimeout(() => { if (star.parentNode) star.remove(); }, 2200);
     }
   }
 
-  function initQrFx() {
-    const button = $("#qrFxToggle");
-    if (button) {
-      button.addEventListener("click", () => {
-        const off = store.get(STORAGE_KEYS.qrfx) === "off";
-        store.set(STORAGE_KEYS.qrfx, off ? "on" : "off");
-        renderQrFx();
-      });
+  function openQr(box) {
+    if (!box || box.classList.contains("is-open")) return;
+    box.classList.add("is-open");
+
+    /* Mở mã là mở luôn cả số tài khoản — một cú chạm, không bắt khách chạm hai lần */
+    const card = box.closest(".gift-card");
+    if (card) card.classList.add("is-open");
+
+    burstSparkles(box);
+
+    const veil = box.querySelector(".qr-veil");
+    if (veil) {
+      veil.setAttribute("aria-hidden", "true");
+      veil.setAttribute("tabindex", "-1");
     }
-    renderQrFx();
+  }
+
+  function initQrReveal() {
+    $$(".gift-qr").forEach((box) => {
+      const veil = box.querySelector(".qr-veil");
+      if (veil) veil.addEventListener("click", () => openQr(box));
+
+      /* Chạm vào chỗ số tài khoản đang mờ cũng mở, khỏi phải mò đúng ô mã */
+      const card   = box.closest(".gift-card");
+      const secret = card && card.querySelector(".gift-secret");
+      if (secret) {
+        secret.addEventListener("click", () => {
+          if (!card.classList.contains("is-open")) openQr(box);
+        });
+      }
+    });
+  }
+
+  /* =====================================================================
+     16 — LẤP LÁNH QUANH NÚT
+  ===================================================================== */
+
+  function initSparkles() {
+    $$(".btn, .copy-chip").forEach((el) => {
+      if (el.querySelector(".spark")) return;
+      for (let i = 1; i <= 3; i += 1) {
+        const star = document.createElement("span");
+        star.className = "spark spark--" + i;
+        star.setAttribute("aria-hidden", "true");
+        star.innerHTML = STAR_SVG;
+        el.appendChild(star);
+      }
+    });
+  }
+
+  /* =====================================================================
+     17 — CHỪA CHỖ CHO HEADER
+     Trình duyệt trong Messenger/Zalo hay trả trang về không đúng đỉnh, làm
+     dòng chữ đầu chui xuống dưới header. Đo chiều cao header thật rồi ghim
+     lại, và ép cuộn về đỉnh vài nhịp cho chắc.
+  ===================================================================== */
+
+  function syncHeaderHeight() {
+    const header = $("#siteHeader");
+    if (!header) return;
+    const h = Math.round(header.getBoundingClientRect().height) || 60;
+    document.documentElement.style.setProperty("--header-h", h + "px");
+  }
+
+  function forceScrollTop() {
+    const jump = () => { try { window.scrollTo(0, 0); } catch (err) {} };
+    jump();
+    requestAnimationFrame(jump);
+    [80, 260, 600, 1000].forEach((ms) => window.setTimeout(jump, ms));
   }
 
   function initMusic() {
@@ -3366,7 +3513,9 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     initModals();
     initHeader();
     initMusic();
-    initQrFx();
+    initQrReveal();
+    initSparkles();
+    syncHeaderHeight();
     initCursor();
     initMagnetic();
 
@@ -3378,6 +3527,14 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     applyGiftAccess();
     tryAutoUnlock().catch(() => {});
     logVisit();
+
+    /* Trình duyệt tự nhớ vị trí cuộn cũ → tắt đi, không thì mở link từ
+       Messenger hay bị rơi vào giữa trang */
+    if ("scrollRestoration" in history) {
+      try { history.scrollRestoration = "manual"; } catch (err) {}
+    }
+    window.addEventListener("resize", syncHeaderHeight);
+    window.addEventListener("orientationchange", syncHeaderHeight);
 
     /* Dán mã vào thanh địa chỉ khi trang đang mở → mở luôn, không cần tải lại */
     window.addEventListener("hashchange", () => {
