@@ -831,6 +831,96 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   color:var(--ink-mid);
 }
 
+/* ===== Lịch tháng cưới — lưới kẻ mảnh, không đóng khung ===== */
+.cal{width:100%}
+.cal__head{display:flex;align-items:baseline;gap:clamp(12px,2vw,22px);margin-bottom:clamp(18px,3vw,28px)}
+.cal__month{
+  font-family:"Playfair Display",Georgia,serif;font-weight:500;
+  font-size:clamp(1.5rem,5vw,2.6rem);line-height:1;color:var(--ink-body);
+}
+.cal__rule{flex:1;height:1px;background:var(--line-soft)}
+.cal__year{font-size:11px;letter-spacing:.28em;color:var(--ink-30);font-weight:700}
+.cal__grid{display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid var(--line-soft)}
+.cal__dow{
+  padding:10px 0 12px;text-align:center;
+  font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--ink-30);
+  border-bottom:1px solid var(--line-soft);
+}
+.cal__cell{
+  position:relative;display:grid;place-items:center;
+  aspect-ratio:1;min-height:34px;
+  font-family:"Playfair Display",Georgia,serif;font-weight:400;
+  font-size:clamp(.85rem,2.6vw,1.15rem);color:var(--ink-30);
+  border-bottom:1px solid rgba(44,48,46,.07);
+}
+.cal__cell--sun{color:var(--ink-45)}
+.cal__cell--empty{border-bottom-color:transparent}
+/* Ngày cưới: to hẳn lên, có vòng champagne, không tô đặc như lịch thường */
+.cal__cell--day{
+  color:var(--ink-body);font-size:clamp(1.35rem,5.2vw,2.1rem);font-weight:500;
+  z-index:1;
+}
+.cal__cell--day::before{
+  content:"";position:absolute;width:clamp(42px,11vw,64px);height:clamp(42px,11vw,64px);
+  border-radius:50%;border:1px solid var(--champagne);z-index:-1;
+  animation:calRing 3.6s var(--ease) infinite;
+}
+.cal__cell--day::after{
+  content:"";position:absolute;bottom:6px;width:16px;height:1px;background:var(--champagne);
+}
+@keyframes calRing{
+  0%,100%{transform:scale(1);opacity:.55}
+  50%    {transform:scale(1.09);opacity:1}
+}
+.cal__note{margin-top:clamp(14px,2.5vw,20px);text-align:right}
+/* Màn rộng: ô vuông sẽ cao lênh khênh, cắt bớt cho lịch gọn lại */
+@media(min-width:768px){
+  .cal__cell{aspect-ratio:auto;min-height:clamp(58px,6.4vw,88px)}
+}
+
+/* ===== Thẻ thông tin trước khi đến ===== */
+.plan-card{padding-top:clamp(10px,2vw,18px);border-top:1px solid var(--line-soft)}
+.weather{display:flex;align-items:center;gap:clamp(14px,3vw,22px);margin-top:clamp(14px,3vw,20px)}
+.weather__icon{flex:0 0 auto;width:clamp(46px,11vw,62px);height:clamp(46px,11vw,62px);display:block}
+.weather__icon svg{width:100%;height:100%;display:block}
+.weather__read{display:flex;flex-direction:column;gap:4px}
+.weather__temp{
+  font-family:"Playfair Display",Georgia,serif;font-weight:500;line-height:1;
+  font-size:clamp(1.7rem,6vw,2.5rem);color:var(--ink-body);
+}
+.weather__note{margin-top:16px;color:var(--ink-30);max-width:44ch}
+
+/* ===== Mã QR mở trên điện thoại — chỉ máy tính mới thấy ===== */
+.desk-qr{
+  position:fixed;z-index:70;
+  right:max(18px,env(safe-area-inset-right,0px));
+  bottom:max(18px,env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  padding:12px 12px 10px;
+  background:rgba(250,248,242,.92);border:1px solid var(--line-soft);
+  backdrop-filter:blur(9px);box-shadow:var(--shadow-soft);
+  animation:qrHop 2.6s var(--ease) infinite;
+}
+.desk-qr[hidden]{display:none}
+.desk-qr__code{display:block;width:104px;height:104px}
+.desk-qr__code svg{width:100%;height:100%;display:block}
+.desk-qr__hint{
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--ink-mid);max-width:112px;text-align:center;line-height:1.5;
+}
+@keyframes qrHop{
+  0%,100%{transform:translateY(0)}
+  50%    {transform:translateY(-9px)}
+}
+/* Điện thoại và máy bảng: khách đang cầm máy rồi, không cần quét nữa */
+@media (max-width:1023.98px),(hover:none),(pointer:coarse){
+  .desk-qr{display:none !important}
+}
+@media (prefers-reduced-motion:reduce){
+  .desk-qr{animation:none}
+  .cal__cell--day::before{animation:none;opacity:.9}
+}
+
 /* Số tài khoản cũng giấu cùng mã QR, mở bằng đúng một cú chạm.
    Đây là hiệu ứng trình bày chứ không phải bảo mật — số vẫn nằm trong mã nguồn trang. */
 .gift-secret{transition:filter 1.1s var(--ease),opacity 1.1s var(--ease)}
@@ -877,9 +967,16 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 .gift-divider{width:34px;height:1px;background:var(--champagne);margin:clamp(14px,3vw,18px) auto}
 
 /* Tên ở footer: mỗi tên là một khối liền, chỉ xuống dòng giữa hai tên */
-.footer-names{overflow-wrap:normal}
+.footer-names{
+  font-family:"Playfair Display",Georgia,serif;font-weight:500;
+  font-size:clamp(1.32rem,5.4vw,2.15rem);line-height:1.2;color:var(--ink-body);
+  overflow-wrap:normal;
+}
 .footer-names > span{white-space:nowrap}
-.footer-names .amp{font-style:italic;color:var(--champagne);padding-inline:.3em;white-space:normal}
+.footer-names .amp{font-style:italic;color:var(--champagne);padding-inline:.42em;font-weight:400}
+.footer-sign{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.footer-sign__rule{width:52px;height:1px;background:var(--champagne)}
+.footer-date{letter-spacing:.26em;color:var(--ink-30)}
 .footer-marquee{font-family:"Playfair Display",Georgia,serif;font-weight:500;
   font-size:clamp(1.55rem,6.4vw,3.8rem);line-height:1.1}
 
@@ -887,8 +984,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 @media(max-width:767.98px){
   .footer-grid{text-align:center}
   .footer-grid > div{display:flex;flex-direction:column;align-items:center}
-  .footer-names > span[data-config]:last-of-type{display:block}
-  .footer-names .amp{padding-left:.24em;padding-right:0}
+  .footer-sign{align-items:center}
   .footer-grid .body-sm{max-width:32ch}
   .footer-grid .rule-soft{display:none}
 }
@@ -1552,6 +1648,64 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   </section>
 
   <!-- =========================
+       TRƯỚC KHI ĐẾN — thời tiết & đường đi
+  ========================= -->
+  <section class="section hairline-top" id="plan">
+    <div class="shell">
+      <div class="grid md:grid-cols-12 gap-y-6 items-end" style="margin-bottom:clamp(36px,7vw,72px)">
+        <div class="md:col-span-6">
+          <p class="eyebrow eyebrow--sage" style="margin-bottom:18px" data-lang="planEyebrow"></p>
+          <h2 class="display-l" data-rv="mask" data-split="line" data-lang="planTitle"></h2>
+        </div>
+        <div class="md:col-span-4 md:col-start-9">
+          <div class="rule-soft" style="margin-bottom:16px"></div>
+          <p class="body-sm" data-lang="planIntro"></p>
+        </div>
+      </div>
+
+      <!-- Lịch tháng cưới — không đóng khung, chỉ có lưới kẻ mảnh -->
+      <div class="cal" data-rv="up" aria-hidden="true">
+        <div class="cal__head">
+          <span class="cal__month" id="calMonth"></span>
+          <span class="cal__rule"></span>
+          <span class="cal__year" id="calYear"></span>
+        </div>
+        <div class="cal__grid" id="calGrid"></div>
+      </div>
+      <p class="sr-only" id="calSr"></p>
+
+      <div class="grid md:grid-cols-12 gap-y-10 md:gap-x-8" style="margin-top:clamp(44px,8vw,86px)">
+
+        <article class="plan-card md:col-span-5" data-rv="up">
+          <p class="eyebrow" data-lang="weatherTitle"></p>
+          <div class="weather">
+            <span class="weather__icon" id="weatherIcon" aria-hidden="true"></span>
+            <span class="weather__read">
+              <span class="weather__temp" id="weatherTemp">—</span>
+              <span class="body-sm" id="weatherDesc"></span>
+            </span>
+          </div>
+          <p class="meta weather__note" id="weatherNote"></p>
+        </article>
+
+        <article class="plan-card md:col-span-5 md:col-start-7" data-rv="up" style="transition-delay:.1s">
+          <p class="eyebrow" data-lang="venueTitle"></p>
+          <h3 class="display-m" style="margin-top:10px" data-config="venueName"></h3>
+          <p class="body-sm" style="margin-top:6px" data-config="venueAddress"></p>
+          <p class="meta" style="margin-top:14px">
+            <span data-lang="ceremonyAt"></span> <span data-config="ceremonyTime"></span>
+          </p>
+          <a class="btn magnetic" id="venueMapLink" target="_blank" rel="noopener noreferrer"
+             style="margin-top:22px;min-width:min(100%,260px)">
+            <span data-lang="venueDirections"></span>
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
        FOOTER
   ========================= -->
   <footer class="hairline-top" style="padding-block:clamp(60px,10vw,120px)">
@@ -1562,10 +1716,13 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 
       <div class="footer-grid grid md:grid-cols-12 gap-y-8 items-end">
         <div class="md:col-span-5">
-          <p class="display-m footer-names">
-            <span data-config="groomShort">Huy Hoàng</span><span class="amp">&amp;</span><span data-config="brideShort">Kiều Loan</span>
-          </p>
-          <p class="meta" style="margin-top:12px" data-config="weddingDateDisplay"></p>
+          <div class="footer-sign">
+            <p class="footer-names">
+              <span data-config="groomShort">Huy Hoàng</span><span class="amp">&amp;</span><span data-config="brideShort">Kiều Loan</span>
+            </p>
+            <span class="footer-sign__rule" aria-hidden="true"></span>
+            <p class="meta footer-date" data-config="weddingDateDisplay"></p>
+          </div>
         </div>
         <div class="md:col-span-3 md:col-start-7">
           <p class="body-sm" data-lang="footerThanks"></p>
@@ -1645,6 +1802,15 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     rsvpDeadline:       "20/11/2026",
     venueName:          "Nhà hàng Thiên Trang",
     venueAddress:       "Cẩm Phả, Quảng Ninh",
+    /* Có link Google Maps chính xác thì dán vào venueMapUrl, để trống thì tự
+       dựng link tìm kiếm từ venueMapQuery. */
+    venueMapQuery:      "Nhà hàng Thiên Trang, Cẩm Phả, Quảng Ninh",
+    venueMapUrl:        "",
+    /* Toạ độ Cẩm Phả — dùng để lấy thời tiết. Nguồn: Open-Meteo, miễn phí, không cần khoá. */
+    weather: {
+      lat: 21.0167, lon: 107.3, tz: "Asia/Bangkok",
+      years: [2020, 2021, 2022, 2023, 2024, 2025]
+    },
     filmStamp:          "06 · 12 · 26",
 
     /* Ảnh — thay đường dẫn tại đây (đang dùng ảnh dựng tạm trong /assets) */
@@ -1862,6 +2028,19 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       memUnlocking:      "Đang mở…",
       musicPlay:         "Bật nhạc nền",
       musicPause:        "Tắt nhạc nền",
+      planEyebrow:       "Chuẩn bị",
+      planTitle:         "TRƯỚC KHI ĐẾN",
+      planIntro:         "Vài thông tin nhỏ để bạn chủ động hơn cho ngày hôm ấy.",
+      weatherTitle:      "Thời tiết ngày cưới",
+      weatherLoading:    "Đang lấy dữ liệu…",
+      weatherFail:       "Chưa lấy được dữ liệu thời tiết.",
+      weatherNoteNormal: "Trung bình ngày 06/12 sáu năm gần đây tại Cẩm Phả. Dự báo thật sẽ tự hiện khi còn dưới hai tuần.",
+      weatherNoteReal:   "Dự báo cho đúng ngày 06/12/2026.",
+      venueTitle:        "Đường tới nhà hàng",
+      venueDirections:   "Chỉ đường trên Google Maps",
+      deskQrHint:        "Quét để mở trên điện thoại",
+      calCaption:        "Ngày cưới rơi vào Chủ Nhật",
+      ceremonyAt:        "Đón khách lúc",
       musicTapToPlay:    "Chạm để bật nhạc",
       qrReveal:          "Chạm để mở",
       memHint:           "Mật khẩu có dạng 06/12/2026_ kèm mã thiệp của bạn.",
@@ -2010,6 +2189,19 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       memUnlocking:      "Unlocking…",
       musicPlay:         "Play music",
       musicPause:        "Pause music",
+      planEyebrow:       "Good to know",
+      planTitle:         "BEFORE YOU COME",
+      planIntro:         "A few practical notes so the day runs easy for you.",
+      weatherTitle:      "Weather on the day",
+      weatherLoading:    "Loading…",
+      weatherFail:       "Weather data unavailable.",
+      weatherNoteNormal: "Average of 6 December over the last six years in Cẩm Phả. The real forecast appears within two weeks of the day.",
+      weatherNoteReal:   "Forecast for 6 December 2026.",
+      venueTitle:        "Getting there",
+      venueDirections:   "Directions on Google Maps",
+      deskQrHint:        "Scan to open on your phone",
+      calCaption:        "The wedding falls on a Sunday",
+      ceremonyAt:        "Guests welcomed from",
       musicTapToPlay:    "Tap to play music",
       qrReveal:          "Tap to reveal",
       memHint:           "The password is 06/12/2026_ followed by your invitation code.",
@@ -2457,6 +2649,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 
     renderGuestGroupTag();
     renderRsvpButtonState();
+    if ($("#calGrid")) { $("#calGrid").textContent = ""; buildCalendar(); }
+    renderWeather();
     const pair = WEDDING_CONFIG.groomName + " & " + WEDDING_CONFIG.brideName;
     document.title = pair + (state.lang === "vi"
       ? " — Thiệp mời cưới 06.12.2026"
@@ -3475,6 +3669,205 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   }
 
   /* =====================================================================
+     17 — LỊCH THÁNG CƯỚI
+     Dựng từ WEDDING_CONFIG.weddingDate nên đổi ngày là lịch tự đúng theo.
+  ===================================================================== */
+
+  function buildCalendar() {
+    const grid = $("#calGrid");
+    if (!grid || grid.childElementCount) return;
+
+    const day   = new Date(WEDDING_CONFIG.weddingDate);
+    if (isNaN(day.getTime())) return;
+    const year  = day.getFullYear();
+    const month = day.getMonth();
+    const mark  = day.getDate();
+
+    const monthEl = $("#calMonth");
+    const yearEl  = $("#calYear");
+    if (monthEl) monthEl.textContent = state.lang === "vi"
+      ? "Tháng " + (month + 1)
+      : ["January","February","March","April","May","June","July",
+         "August","September","October","November","December"][month];
+    if (yearEl) yearEl.textContent = String(year);
+
+    const dows = state.lang === "vi"
+      ? ["CN","T2","T3","T4","T5","T6","T7"]
+      : ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+    grid.textContent = "";
+    dows.forEach((d) => {
+      const cell = document.createElement("span");
+      cell.className = "cal__dow";
+      cell.textContent = d;
+      grid.appendChild(cell);
+    });
+
+    const firstDow = new Date(year, month, 1).getDay();      /* 0 = Chủ Nhật */
+    const total    = new Date(year, month + 1, 0).getDate();
+
+    for (let i = 0; i < firstDow; i += 1) {
+      const blank = document.createElement("span");
+      blank.className = "cal__cell cal__cell--empty";
+      grid.appendChild(blank);
+    }
+    for (let d = 1; d <= total; d += 1) {
+      const cell = document.createElement("span");
+      cell.className = "cal__cell";
+      if (new Date(year, month, d).getDay() === 0) cell.classList.add("cal__cell--sun");
+      if (d === mark) cell.classList.add("cal__cell--day");
+      cell.textContent = String(d);
+      grid.appendChild(cell);
+    }
+
+    const sr = $("#calSr");
+    if (sr) sr.textContent = t("calCaption");
+  }
+
+  /* =====================================================================
+     18 — THỜI TIẾT NGÀY CƯỚI
+     Còn xa thì lấy số liệu thật của đúng ngày đó các năm trước; tới gần thì
+     tự chuyển sang dự báo thật. Không dịch vụ nào dự báo nổi 3 tháng, nên
+     không bịa ra một con số rồi gọi đó là dự báo.
+  ===================================================================== */
+
+  const weather = { data: null };
+
+  const WX = {
+    /* mã WMO → nhóm biểu tượng + mô tả */
+    group(code) {
+      if (code === 0) return "sun";
+      if (code === 1 || code === 2) return "part";
+      if (code === 3 || code === 45 || code === 48) return "cloud";
+      return "rain";
+    },
+    text(code, lang) {
+      const vi = { sun:"Trời quang", part:"Nắng nhẹ, ít mây", cloud:"Nhiều mây", rain:"Có mưa nhẹ" };
+      const en = { sun:"Clear", part:"Mostly sunny", cloud:"Cloudy", rain:"Light rain" };
+      return (lang === "vi" ? vi : en)[WX.group(code)];
+    },
+    icon(code) {
+      const g = WX.group(code);
+      const sun  = '<circle cx="32" cy="30" r="12" fill="none" stroke="currentColor" stroke-width="1.6"/>' +
+                   '<g stroke="currentColor" stroke-width="1.6" stroke-linecap="round">' +
+                   '<path d="M32 8v7M32 45v7M10 30h7M47 30h7M17 15l5 5M42 40l5 5M47 15l-5 5M22 40l-5 5"/></g>';
+      const cloud = '<path d="M20 46h24a9 9 0 0 0 .6-18 13 13 0 0 0-25 3A8 8 0 0 0 20 46z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>';
+      const drops = '<g stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M24 52l-2 5M34 52l-2 5M44 52l-2 5"/></g>';
+      const body = g === "sun"   ? sun
+                 : g === "part"  ? '<circle cx="24" cy="22" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>' + cloud
+                 : g === "cloud" ? cloud
+                 : cloud + drops;
+      return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true" style="color:var(--champagne)">' + body + '</svg>';
+    }
+  };
+
+  function renderWeather() {
+    const d = weather.data;
+    const temp = $("#weatherTemp");
+    const desc = $("#weatherDesc");
+    const note = $("#weatherNote");
+    const icon = $("#weatherIcon");
+    if (!temp) return;
+
+    if (!d) {
+      temp.textContent = "—";
+      if (desc) desc.textContent = t("weatherFail");
+      if (note) note.textContent = "";
+      return;
+    }
+    temp.textContent = Math.round(d.min) + "–" + Math.round(d.max) + "°C";
+    if (desc) desc.textContent = WX.text(d.code, state.lang);
+    if (note) note.textContent = t(d.real ? "weatherNoteReal" : "weatherNoteNormal");
+    if (icon) icon.innerHTML = WX.icon(d.code);
+  }
+
+  async function getJson(url) {
+    const ctrl = new AbortController();
+    const timer = window.setTimeout(() => ctrl.abort(), 8000);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error("http " + res.status);
+      return await res.json();
+    } finally { window.clearTimeout(timer); }
+  }
+
+  async function loadWeather() {
+    const cfg = WEDDING_CONFIG.weather;
+    const card = $("#weatherTemp");
+    if (!cfg || !card) return;
+
+    const desc = $("#weatherDesc");
+    if (desc) desc.textContent = t("weatherLoading");
+
+    const iso  = WEDDING_CONFIG.weddingDate.slice(0, 10);
+    const days = Math.round((new Date(iso + "T12:00:00") - new Date()) / 86400000);
+    const base = "latitude=" + cfg.lat + "&longitude=" + cfg.lon +
+                 "&timezone=" + encodeURIComponent(cfg.tz) +
+                 "&daily=weather_code,temperature_2m_max,temperature_2m_min";
+
+    try {
+      if (days >= 0 && days <= 15) {
+        /* Đủ gần để có dự báo thật */
+        const j = await getJson("https://api.open-meteo.com/v1/forecast?" + base +
+                                "&start_date=" + iso + "&end_date=" + iso);
+        weather.data = {
+          real: true,
+          max: j.daily.temperature_2m_max[0],
+          min: j.daily.temperature_2m_min[0],
+          code: j.daily.weather_code[0]
+        };
+      } else {
+        /* Còn xa: lấy đúng ngày đó của các năm trước, tính trung bình */
+        const md = iso.slice(4);          /* "-12-06" */
+        const list = await Promise.all(cfg.years.map((y) =>
+          getJson("https://archive-api.open-meteo.com/v1/archive?" + base +
+                  "&start_date=" + y + md + "&end_date=" + y + md).catch(() => null)
+        ));
+        const good = list.filter((j) => j && j.daily && j.daily.temperature_2m_max[0] != null);
+        if (!good.length) throw new Error("khong co du lieu");
+
+        const avg = (pick) => good.reduce((sum, j) => sum + pick(j), 0) / good.length;
+        const codes = good.map((j) => j.daily.weather_code[0]);
+        codes.sort((a, b) => a - b);
+        weather.data = {
+          real: false,
+          max: avg((j) => j.daily.temperature_2m_max[0]),
+          min: avg((j) => j.daily.temperature_2m_min[0]),
+          code: codes[Math.floor(codes.length / 2)]      /* mã hay gặp nhất, lấy trung vị */
+        };
+      }
+    } catch (err) {
+      weather.data = null;
+    }
+    renderWeather();
+  }
+
+  /* =====================================================================
+     19 — ĐƯỜNG TỚI NHÀ HÀNG & MÃ QR TRÊN MÁY TÍNH
+  ===================================================================== */
+
+  function initVenue() {
+    const link = $("#venueMapLink");
+    if (!link) return;
+    const url = WEDDING_CONFIG.venueMapUrl ||
+      ("https://www.google.com/maps/search/?api=1&query=" +
+       encodeURIComponent(WEDDING_CONFIG.venueMapQuery ||
+         ((WEDDING_CONFIG.venueName || "") + " " + (WEDDING_CONFIG.venueAddress || ""))));
+    link.setAttribute("href", url);
+  }
+
+  /** Khách đang cầm điện thoại thì quét mã làm gì — chỉ hiện trên máy tính */
+  function initDeskQr() {
+    const box = $("#deskQr");
+    if (!box) return;
+    const roomy = window.matchMedia("(min-width:1024px) and (hover:hover) and (pointer:fine)");
+    const sync = () => { if (roomy.matches) box.removeAttribute("hidden"); else box.setAttribute("hidden", "hidden"); };
+    sync();
+    if (roomy.addEventListener) roomy.addEventListener("change", sync);
+    else if (roomy.addListener) roomy.addListener(sync);
+  }
+
+  /* =====================================================================
      17 — CHỪA CHỖ CHO HEADER
      Trình duyệt trong Messenger/Zalo hay trả trang về không đúng đỉnh, làm
      dòng chữ đầu chui xuống dưới header. Đo chiều cao header thật rồi ghim
@@ -3514,6 +3907,10 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     initHeader();
     initMusic();
     initQrReveal();
+    initVenue();
+    initDeskQr();
+    buildCalendar();
+    loadWeather();
     initSparkles();
     syncHeaderHeight();
     initCursor();
@@ -3571,6 +3968,12 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     <span class="music-meta__title" id="musicTitle"></span>
   </div>
 </div>
+<!-- Quét để mở trên điện thoại — chỉ hiện trên máy tính -->
+<aside id="deskQr" class="desk-qr" hidden>
+  <span class="desk-qr__code"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" shape-rendering="crispEdges" role="img" aria-label="QR"><rect width="33" height="33" fill="#fff"/><path d="M2 2h7v1h-7zM12 2h1v1h-1zM15 2h3v1h-3zM19 2h3v1h-3zM24 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM11 3h1v1h-1zM15 3h3v1h-3zM19 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM30 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM12 4h2v1h-2zM18 4h2v1h-2zM21 4h2v1h-2zM24 4h1v1h-1zM26 4h3v1h-3zM30 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM12 5h2v1h-2zM16 5h1v1h-1zM20 5h2v1h-2zM24 5h1v1h-1zM26 5h3v1h-3zM30 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM11 6h8v1h-8zM24 6h1v1h-1zM26 6h3v1h-3zM30 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM17 7h1v1h-1zM20 7h3v1h-3zM24 7h1v1h-1zM30 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h7v1h-7zM16 9h2v1h-2zM19 9h1v1h-1zM21 9h2v1h-2zM2 10h1v1h-1zM5 10h1v1h-1zM7 10h2v1h-2zM10 10h1v1h-1zM14 10h2v1h-2zM18 10h1v1h-1zM21 10h1v1h-1zM23 10h1v1h-1zM25 10h1v1h-1zM4 11h2v1h-2zM12 11h1v1h-1zM18 11h1v1h-1zM23 11h2v1h-2zM27 11h1v1h-1zM30 11h1v1h-1zM4 12h2v1h-2zM7 12h2v1h-2zM10 12h5v1h-5zM20 12h5v1h-5zM26 12h4v1h-4zM10 13h4v1h-4zM15 13h1v1h-1zM17 13h2v1h-2zM21 13h2v1h-2zM24 13h1v1h-1zM26 13h1v1h-1zM28 13h2v1h-2zM2 14h2v1h-2zM8 14h3v1h-3zM12 14h1v1h-1zM16 14h1v1h-1zM18 14h2v1h-2zM23 14h2v1h-2zM27 14h1v1h-1zM29 14h2v1h-2zM3 15h1v1h-1zM5 15h1v1h-1zM7 15h1v1h-1zM11 15h3v1h-3zM19 15h3v1h-3zM23 15h1v1h-1zM4 16h1v1h-1zM6 16h4v1h-4zM12 16h1v1h-1zM14 16h1v1h-1zM19 16h1v1h-1zM24 16h1v1h-1zM26 16h5v1h-5zM3 17h1v1h-1zM5 17h2v1h-2zM11 17h5v1h-5zM17 17h4v1h-4zM25 17h3v1h-3zM29 17h1v1h-1zM2 18h3v1h-3zM6 18h3v1h-3zM10 18h1v1h-1zM14 18h3v1h-3zM19 18h1v1h-1zM21 18h1v1h-1zM23 18h1v1h-1zM25 18h1v1h-1zM29 18h1v1h-1zM3 19h1v1h-1zM7 19h1v1h-1zM9 19h2v1h-2zM12 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM18 19h1v1h-1zM22 19h4v1h-4zM27 19h1v1h-1zM30 19h1v1h-1zM2 20h1v1h-1zM4 20h2v1h-2zM8 20h5v1h-5zM14 20h2v1h-2zM19 20h2v1h-2zM22 20h2v1h-2zM25 20h2v1h-2zM29 20h2v1h-2zM4 21h1v1h-1zM6 21h1v1h-1zM11 21h3v1h-3zM15 21h1v1h-1zM19 21h1v1h-1zM21 21h1v1h-1zM23 21h1v1h-1zM29 21h2v1h-2zM2 22h1v1h-1zM6 22h4v1h-4zM11 22h1v1h-1zM13 22h1v1h-1zM16 22h1v1h-1zM20 22h1v1h-1zM22 22h5v1h-5zM28 22h1v1h-1zM10 23h2v1h-2zM15 23h1v1h-1zM18 23h1v1h-1zM22 23h1v1h-1zM26 23h1v1h-1zM28 23h3v1h-3zM2 24h7v1h-7zM13 24h1v1h-1zM15 24h2v1h-2zM18 24h2v1h-2zM22 24h1v1h-1zM24 24h1v1h-1zM26 24h1v1h-1zM29 24h1v1h-1zM2 25h1v1h-1zM8 25h1v1h-1zM10 25h3v1h-3zM14 25h2v1h-2zM18 25h1v1h-1zM21 25h2v1h-2zM26 25h3v1h-3zM30 25h1v1h-1zM2 26h1v1h-1zM4 26h3v1h-3zM8 26h1v1h-1zM12 26h1v1h-1zM16 26h4v1h-4zM22 26h5v1h-5zM29 26h2v1h-2zM2 27h1v1h-1zM4 27h3v1h-3zM8 27h1v1h-1zM10 27h1v1h-1zM13 27h2v1h-2zM16 27h1v1h-1zM18 27h1v1h-1zM21 27h2v1h-2zM24 27h1v1h-1zM26 27h4v1h-4zM2 28h1v1h-1zM4 28h3v1h-3zM8 28h1v1h-1zM11 28h4v1h-4zM19 28h3v1h-3zM26 28h3v1h-3zM30 28h1v1h-1zM2 29h1v1h-1zM8 29h1v1h-1zM12 29h1v1h-1zM14 29h3v1h-3zM18 29h3v1h-3zM22 29h1v1h-1zM25 29h1v1h-1zM29 29h1v1h-1zM2 30h7v1h-7zM10 30h3v1h-3zM14 30h1v1h-1zM17 30h1v1h-1zM19 30h1v1h-1zM21 30h4v1h-4zM27 30h1v1h-1zM29 30h1v1h-1z" fill="#2C302E"/></svg></span>
+  <span class="desk-qr__hint" data-lang="deskQrHint"></span>
+</aside>
+
 <audio id="bgAudio" loop preload="none" playsinline></audio>
 
 </body>
