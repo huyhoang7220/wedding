@@ -282,7 +282,16 @@ a{color:inherit;text-decoration:none}
 [data-rv].rv-in{opacity:1;transform:translate3d(0,0,0)}
 
 /* Char / word split reveal */
-.split-line{display:block;overflow:hidden;padding-bottom:.16em;margin-bottom:-.10em}
+/* overflow:hidden ở đây là để làm hiệu ứng chữ trồi lên. Nhưng dấu thanh chồng
+   trên dấu mũ (Ế Ắ Ầ Ố Ớ) vươn cao hơn hộp dòng, nên bị xén mất — chữ ĐẾN hiện
+   ra thành ĐÊN. Nới trần lên rồi kéo lại bằng lề âm: chữ không xê dịch một ly,
+   mà dấu không còn bị cắt. Đo được: nét cao nhất của "ĐẾN" là 36px trong khi
+   hộp dòng chỉ 34,9px. */
+.split-line{
+  display:block;overflow:hidden;
+  padding-top:.26em;margin-top:-.26em;
+  padding-bottom:.16em;margin-bottom:-.10em;
+}
 .split-unit{
   display:inline-block;
   transform:translate3d(0,110%,0) rotate(3deg);
@@ -315,7 +324,7 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ---------- 07. MARQUEE ---------- */
-.marquee{overflow:hidden;white-space:nowrap;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.marquee{overflow:hidden;white-space:nowrap;padding-top:.24em;margin-top:-.24em;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
 .marquee__track{display:inline-flex;gap:0;animation:marquee 42s linear infinite;will-change:transform}
 .marquee__track span{padding-inline:.4em}
 @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
