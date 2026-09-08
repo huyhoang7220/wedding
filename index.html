@@ -933,6 +933,58 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 .venue-acts{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(14px,3vw,22px);margin-top:clamp(20px,4vw,26px)}
 .venue-acts .btn{min-width:min(100%,258px)}
 
+/* ===== Cụm nút thêm vào lịch ===== */
+.cal-acts{
+  display:flex;flex-wrap:wrap;align-items:center;gap:clamp(14px,3vw,24px);
+  margin-top:clamp(26px,5vw,40px);
+}
+.cal-acts .btn{min-width:min(100%,270px)}
+.cal-acts__done{
+  flex-basis:100%;color:var(--deep-sage);opacity:0;transform:translateY(4px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease);
+}
+.cal-acts__done.is-on{opacity:1;transform:none}
+
+/* ===== Sổ lưu bút ===== */
+.wish-area{
+  min-height:112px;resize:vertical;line-height:1.7;padding-top:10px;
+  font-family:inherit;
+}
+.wish-count{
+  position:absolute;right:0;bottom:-22px;
+  font-size:10px;letter-spacing:.14em;color:var(--ink-30);
+}
+.wish-form .field{position:relative}
+
+.wish-thanks{
+  position:relative;text-align:center;
+  padding:clamp(30px,6vw,52px) clamp(20px,4vw,36px);
+  border:1px solid var(--line-soft);background:rgba(250,248,242,.6);
+  overflow:hidden;
+}
+.wish-thanks[hidden]{display:none}
+/* Vệt sáng quét chậm sau lời cảm ơn */
+.wish-thanks::before{
+  content:"";position:absolute;inset:-45%;z-index:0;pointer-events:none;
+  background:conic-gradient(from 0turn,
+    rgba(200,184,154,0) 0turn,
+    rgba(200,184,154,.30) .12turn,
+    rgba(200,184,154,0) .34turn,
+    rgba(200,184,154,0) 1turn);
+  animation:qrOrbit 13s linear infinite;
+}
+.wish-thanks > *{position:relative;z-index:1}
+.wish-thanks__seal{
+  display:grid;place-items:center;margin:0 auto clamp(16px,3vw,24px);
+  width:58px;height:58px;border-radius:50%;
+  border:1px solid var(--champagne);background:rgba(250,248,242,.8);
+  font-family:"Playfair Display",Georgia,serif;font-size:14px;color:var(--ink-mid);
+  animation:qrBreath 3.4s var(--ease) infinite;
+}
+@media (prefers-reduced-motion:reduce){
+  .wish-thanks::before,.wish-thanks__seal{animation:none}
+}
+
 /* ===== Bụi sao trôi rất chậm sau nội dung ===== */
 .stardust{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
 .stardust i{
@@ -1632,6 +1684,62 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   <!-- =========================
        SECRET MEMORY
   ========================= -->
+  <!-- =========================
+       SỔ LƯU BÚT
+  ========================= -->
+  <section class="section hairline-top" id="wish">
+    <div class="shell">
+      <div class="grid md:grid-cols-12 gap-y-6 items-end" style="margin-bottom:clamp(34px,6vw,64px)">
+        <div class="md:col-span-6">
+          <p class="eyebrow eyebrow--sage" style="margin-bottom:18px" data-lang="wishEyebrow"></p>
+          <h2 class="display-l" data-rv="mask" data-split="line" data-lang="wishTitle"></h2>
+        </div>
+        <div class="md:col-span-4 md:col-start-9">
+          <div class="rule-soft" style="margin-bottom:16px"></div>
+          <p class="body-sm" data-lang="wishLead"></p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-12">
+        <div class="md:col-span-7 md:col-start-1">
+          <form id="wishForm" class="wish-form" autocomplete="off" novalidate data-rv="up">
+            <div class="field" id="fieldWishName">
+              <label class="field__label" for="wishName" data-lang="wishNameLabel"></label>
+              <input id="wishName" name="wishName" type="text" class="field__input"
+                     maxlength="60" data-lang-placeholder="wishNamePlaceholder" />
+              <span class="field__line"></span>
+            </div>
+
+            <div class="field" id="fieldWishText" style="margin-top:clamp(20px,4vw,30px)">
+              <label class="field__label" for="wishText" data-lang="wishTextLabel"></label>
+              <textarea id="wishText" name="wishText" class="field__input wish-area" rows="4"
+                        maxlength="400" data-lang-placeholder="wishTextPlaceholder"
+                        aria-describedby="errWish"></textarea>
+              <span class="field__line"></span>
+              <span class="wish-count tnum" id="wishCount" aria-hidden="true">0 / 400</span>
+              <span class="field__error" id="errWish" role="alert"></span>
+            </div>
+
+            <button type="submit" id="wishSubmit" class="btn magnetic"
+                    style="margin-top:clamp(24px,5vw,34px);min-width:min(100%,280px)">
+              <span id="wishSubmitText" data-lang="wishSubmit"></span>
+            </button>
+          </form>
+
+          <div id="wishThanks" class="wish-thanks" hidden>
+            <span class="wish-thanks__seal" aria-hidden="true">H&amp;L</span>
+            <p class="display-m" data-lang="wishThanksTitle"></p>
+            <p class="body-sm" style="margin-top:10px" data-lang="wishThanksBody"></p>
+            <button type="button" class="link-underline meta" id="wishAgain"
+                    style="margin-top:20px;color:var(--deep-sage)">
+              <span data-lang="wishAgain"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section hairline-top" id="memorySection" aria-labelledby="memoryTitle">
     <div class="shell">
 
@@ -1755,6 +1863,17 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       </div>
       <p class="sr-only" id="calSr"></p>
 
+      <div class="cal-acts" data-rv="up">
+        <button type="button" class="btn magnetic" id="calAddBtn">
+          <span data-lang="calAdd"></span>
+        </button>
+        <a class="link-underline meta" id="calGoogleLink" target="_blank" rel="noopener noreferrer"
+           style="color:var(--deep-sage)">
+          <span data-lang="calGoogle"></span>
+        </a>
+        <p class="meta cal-acts__done" id="calDone" role="status" aria-live="polite"></p>
+      </div>
+
       <div class="grid md:grid-cols-12 gap-y-10 md:gap-x-8" style="margin-top:clamp(44px,8vw,86px)">
 
         <article class="plan-card md:col-span-5" data-rv="up">
@@ -1774,7 +1893,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
           <h3 class="display-m" style="margin-top:10px" data-config="venueName"></h3>
           <p class="body-sm" style="margin-top:6px" data-config="venueAddress"></p>
           <p class="meta" style="margin-top:14px">
-            <span data-lang="ceremonyAt"></span> <span data-config="ceremonyTime"></span>
+            <span data-lang="ceremonyAt"></span> <span data-config="welcomeTime"></span>
+            <span style="color:var(--ink-30)"> · <span data-lang="ev2Title"></span> <span data-config="ceremonyTime"></span></span>
           </p>
           <div class="venue-acts">
             <a class="btn magnetic" id="venueMapLink" target="_blank" rel="noopener noreferrer">
@@ -1885,6 +2005,14 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     weddingDate:        "2026-12-06T11:30:00",   /* đếm ngược tới đúng giờ làm lễ */
     weddingDateDisplay: "06/12/2026",
     ceremonyTime:       "11:30",
+    welcomeTime:        "11:00",
+    /* Sự kiện đưa vào lịch của khách: tính từ lúc đón khách tới lúc tan tiệc.
+       +07:00 là giờ Việt Nam — ghi rõ để lịch của khách ở múi giờ khác vẫn đúng. */
+    calendar: {
+      start: "2026-12-06T11:00:00+07:00",
+      end:   "2026-12-06T14:00:00+07:00",
+      alarmDays: 1
+    },
     rsvpDeadline:       "20/11/2026",
     venueName:          "Nhà hàng Thiên Trang",
     venueAddress:       "07 Trần Phú, Cẩm Phả, Quảng Ninh",
@@ -1986,6 +2114,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     group:  "guestGroup",
     rsvp:   "rsvpDone",
     code:   "invitationCode",
+    name:   "guestName",       /* để sổ lưu bút điền sẵn tên */
     memory: "memoryUnlocked"   /* chỉ dùng để dọn cờ cũ — không lưu mới nữa */
   };
 
@@ -2119,6 +2248,23 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       memUnlocking:      "Đang mở…",
       musicPlay:         "Bật nhạc nền",
       musicPause:        "Tắt nhạc nền",
+      calAdd:            "Thêm vào lịch điện thoại",
+      calGoogle:         "Dùng Google Lịch →",
+      calDone:           "Đã tải về — mở tệp để thêm vào lịch",
+      wishEyebrow:       "Sổ lưu bút",
+      wishTitle:         "GỬI ĐÔI LỜI\nCHO CHÚNG TÔI",
+      wishLead:          "Một câu thôi cũng được. Chúng tôi sẽ ngồi đọc lại tất cả sau ngày cưới.",
+      wishNameLabel:     "Tên bạn",
+      wishNamePlaceholder: "Tên của bạn",
+      wishTextLabel:     "Lời chúc",
+      wishTextPlaceholder: "Viết vài dòng gửi cô dâu chú rể…",
+      wishSubmit:        "Gửi lời chúc",
+      wishSending:       "Đang gửi…",
+      wishThanksTitle:   "Đã nhận được rồi",
+      wishThanksBody:    "Cảm ơn bạn. Chúng tôi sẽ đọc từng dòng một.",
+      wishAgain:         "Viết thêm một lời nữa",
+      errWishEmpty:      "Bạn chưa viết gì cả",
+      errWishShort:      "Viết thêm một chút nữa nhé",
       planEyebrow:       "Chuẩn bị",
       planTitle:         "TRƯỚC KHI ĐẾN",
       planIntro:         "Vài thông tin nhỏ để bạn chủ động hơn cho ngày hôm ấy.",
@@ -2281,6 +2427,23 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       memUnlocking:      "Unlocking…",
       musicPlay:         "Play music",
       musicPause:        "Pause music",
+      calAdd:            "Add to my calendar",
+      calGoogle:         "Use Google Calendar →",
+      calDone:           "Downloaded — open the file to add it",
+      wishEyebrow:       "Guest book",
+      wishTitle:         "LEAVE US\nA FEW WORDS",
+      wishLead:          "One line is plenty. We will sit and read them all after the day.",
+      wishNameLabel:     "Your name",
+      wishNamePlaceholder: "Your name",
+      wishTextLabel:     "Your message",
+      wishTextPlaceholder: "Write a few words for the couple…",
+      wishSubmit:        "Send your wishes",
+      wishSending:       "Sending…",
+      wishThanksTitle:   "Received",
+      wishThanksBody:    "Thank you. We will read every line.",
+      wishAgain:         "Write another one",
+      errWishEmpty:      "You haven't written anything yet",
+      errWishShort:      "A little more, please",
       planEyebrow:       "Good to know",
       planTitle:         "BEFORE YOU COME",
       planIntro:         "A few practical notes so the day runs easy for you.",
@@ -2743,6 +2906,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     renderGuestGroupTag();
     renderRsvpButtonState();
     if ($("#calGrid")) { $("#calGrid").textContent = ""; buildCalendar(); }
+    if ($("#calGoogleLink")) $("#calGoogleLink").setAttribute("href", googleCalendarUrl());
     renderWeather();
     const pair = WEDDING_CONFIG.groomName + " & " + WEDDING_CONFIG.brideName;
     document.title = pair + (state.lang === "vi"
@@ -3106,6 +3270,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 
       if (data && data.status === "success" && data.uniqueCode) {
         store.set(STORAGE_KEYS.code, String(data.uniqueCode));
+        store.set(STORAGE_KEYS.name, name);
         state.isSending = false;
         renderRsvpButtonState();
         renderMemoryVisibility();
@@ -3788,6 +3953,213 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   }
 
   /* =====================================================================
+     17 — THÊM VÀO LỊCH
+     Sinh tệp .ics ngay trên máy khách, không qua dịch vụ nào. Kèm link Google
+     Lịch làm đường lui cho trình duyệt chặn tải tệp (hay gặp trong Messenger).
+  ===================================================================== */
+
+  /** Ngày giờ theo chuẩn iCalendar, quy về giờ quốc tế */
+  function icsStamp(value) {
+    const d = value instanceof Date ? value : new Date(value);
+    return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  }
+
+  /** Dòng dài phải gấp lại theo chuẩn, không vài phần mềm lịch sẽ đọc sai */
+  function icsFold(line) {
+    if (line.length <= 72) return line;
+    const parts = [];
+    let rest = line;
+    while (rest.length > 72) {
+      parts.push(rest.slice(0, 72));
+      rest = " " + rest.slice(72);
+    }
+    parts.push(rest);
+    return parts.join("\r\n");
+  }
+
+  function icsEscape(text) {
+    return String(text).replace(/\\/g, "\\\\").replace(/;/g, "\\;")
+                       .replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  }
+
+  function calendarPieces() {
+    const cfg = WEDDING_CONFIG;
+    const cal = cfg.calendar || {};
+    const title = (state.lang === "vi" ? "Lễ cưới " : "Wedding of ") +
+                  cfg.groomShort + " & " + cfg.brideShort;
+    const place = [cfg.venueName, cfg.venueAddress].filter(Boolean).join(", ");
+    const note  = (state.lang === "vi"
+      ? "Đón khách " + cfg.welcomeTime + " · Lễ thành hôn " + cfg.ceremonyTime
+      : "Guests from " + cfg.welcomeTime + " · Ceremony " + cfg.ceremonyTime) +
+      "\n" + window.location.href.split("#")[0];
+    return { title: title, place: place, note: note, start: cal.start, end: cal.end,
+             alarmDays: cal.alarmDays || 1 };
+  }
+
+  function buildIcs() {
+    const p = calendarPieces();
+    const lines = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//H&L Wedding Invitation//VI//",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      "UID:hl-wedding-" + icsStamp(p.start) + "@huyhoang7220",
+      "DTSTAMP:" + icsStamp(new Date()),
+      "DTSTART:" + icsStamp(p.start),
+      "DTEND:" + icsStamp(p.end),
+      "SUMMARY:" + icsEscape(p.title),
+      "LOCATION:" + icsEscape(p.place),
+      "DESCRIPTION:" + icsEscape(p.note),
+      "BEGIN:VALARM",
+      "TRIGGER:-P" + p.alarmDays + "D",
+      "ACTION:DISPLAY",
+      "DESCRIPTION:" + icsEscape(p.title),
+      "END:VALARM",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ];
+    return lines.map(icsFold).join("\r\n") + "\r\n";
+  }
+
+  function googleCalendarUrl() {
+    const p = calendarPieces();
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" + encodeURIComponent(p.title) +
+      "&dates=" + icsStamp(p.start) + "/" + icsStamp(p.end) +
+      "&location=" + encodeURIComponent(p.place) +
+      "&details=" + encodeURIComponent(p.note);
+  }
+
+  function initCalendarActions() {
+    const btn  = $("#calAddBtn");
+    const link = $("#calGoogleLink");
+    const done = $("#calDone");
+
+    if (link) link.setAttribute("href", googleCalendarUrl());
+
+    if (btn) {
+      btn.addEventListener("click", () => {
+        try {
+          const blob = new Blob([buildIcs()], { type: "text/calendar;charset=utf-8" });
+          const url  = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "le-cuoi-huy-hoang-kieu-loan.ics";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.setTimeout(() => URL.revokeObjectURL(url), 4000);
+
+          if (done) { done.textContent = t("calDone"); done.classList.add("is-on"); }
+          burstSparkles(btn);
+        } catch (err) {
+          /* Trình duyệt chặn tải tệp → đẩy khách sang Google Lịch */
+          window.open(googleCalendarUrl(), "_blank", "noopener");
+        }
+      });
+    }
+  }
+
+  /* =====================================================================
+     18 — SỔ LƯU BÚT
+     Lời chúc gửi thẳng vào Google Sheet, tab riêng, không hiện công khai
+     trên thiệp — để khách viết thoải mái, và cô dâu chú rể đọc riêng.
+  ===================================================================== */
+
+  function initWish() {
+    const form = $("#wishForm");
+    if (!form) return;
+
+    const name  = $("#wishName");
+    const text  = $("#wishText");
+    const count = $("#wishCount");
+    const again = $("#wishAgain");
+
+    /* Điền sẵn tên nếu khách đã xác nhận tham dự */
+    const saved = store.get(STORAGE_KEYS.name);
+    if (name && saved && !name.value) name.value = saved;
+
+    const sync = () => {
+      if (!text || !count) return;
+      count.textContent = text.value.length + " / 400";
+      const field = text.closest(".field");
+      if (field) field.classList.toggle("is-filled", text.value.trim() !== "");
+    };
+    if (text) { text.addEventListener("input", sync); sync(); }
+
+    if (again) {
+      again.addEventListener("click", () => {
+        $("#wishThanks").setAttribute("hidden", "hidden");
+        form.removeAttribute("hidden");
+        if (text) { text.value = ""; sync(); text.focus(); }
+      });
+    }
+
+    form.addEventListener("submit", handleWish);
+  }
+
+  async function handleWish(event) {
+    event.preventDefault();
+    if (state.wishSending) return;
+
+    const form   = $("#wishForm");
+    const name   = $("#wishName");
+    const text   = $("#wishText");
+    const button = $("#wishSubmit");
+    const label  = $("#wishSubmitText");
+    const errBox = $("#errWish");
+    const field  = $("#fieldWishText");
+
+    const message = text ? text.value.trim() : "";
+    setFieldError(field, errBox, "");
+
+    if (!message) { setFieldError(field, errBox, t("errWishEmpty")); shake(field); text.focus(); return; }
+    if (message.length < 4) { setFieldError(field, errBox, t("errWishShort")); shake(field); return; }
+
+    state.wishSending = true;
+    setButtonBusy(button, true);
+    if (label) { label.removeAttribute("data-lang"); label.textContent = t("wishSending"); }
+
+    const finish = () => {
+      state.wishSending = false;
+      setButtonBusy(button, false);
+      if (label) { label.setAttribute("data-lang", "wishSubmit"); label.textContent = t("wishSubmit"); }
+    };
+
+    const showThanks = () => {
+      const thanks = $("#wishThanks");
+      form.setAttribute("hidden", "hidden");
+      if (thanks) {
+        thanks.removeAttribute("hidden");
+        burstSparkles(thanks);
+      }
+    };
+
+    /* Xem trước cục bộ: không có máy chủ thì vẫn cảm ơn cho trọn vẹn */
+    if (useLocalMode()) { finish(); showThanks(); return; }
+
+    try {
+      const data = await postToBackend({
+        action: "wish",
+        name: name ? name.value.trim() : "",
+        message: message,
+        group: store.get(STORAGE_KEYS.group) || state.guestGroup || "",
+        code: store.get(STORAGE_KEYS.code) || "",
+        ip: await fetchGuestIP()
+      });
+      finish();
+      if (data && data.status === "success") showThanks();
+      else { setFieldError(field, errBox, (data && data.message) ? data.message : t("errServer")); shake(field); }
+    } catch (err) {
+      finish();
+      /* Gửi được nhưng không đọc được phản hồi → vẫn coi là xong, không bắt khách viết lại */
+      showThanks();
+    }
+  }
+
+  /* =====================================================================
      17 — LỊCH THÁNG CƯỚI
      Dựng từ WEDDING_CONFIG.weddingDate nên đổi ngày là lịch tự đúng theo.
   ===================================================================== */
@@ -4051,6 +4423,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     initQrReveal();
     initVenue();
     initDeskQr();
+    initCalendarActions();
+    initWish();
     buildCalendar();
     loadWeather();
     initSparkles();
