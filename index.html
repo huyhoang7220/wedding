@@ -129,7 +129,10 @@ body{
   line-height:1.7;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
+  /* KHÔNG dùng text-rendering:optimizeLegibility — Safari trên iOS làm rụng dấu
+     thanh của chữ có hai dấu (Ế Ắ Ầ Ố), máy tính thì vẫn hiện đúng nên rất dễ
+     bỏ sót. Bỏ đi, phần đẹp thêm không đáng so với việc sai chính tả. */
+  text-rendering:auto;
   overflow-wrap:break-word;
 }
 body.is-locked{overflow:hidden;height:100vh}
@@ -927,6 +930,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   font-size:clamp(1.7rem,6vw,2.5rem);color:var(--ink-body);
 }
 .weather__note{margin-top:16px;color:var(--ink-30);max-width:44ch}
+.venue-acts{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(14px,3vw,22px);margin-top:clamp(20px,4vw,26px)}
+.venue-acts .btn{min-width:min(100%,258px)}
 
 /* ===== Bụi sao trôi rất chậm sau nội dung ===== */
 .stardust{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
@@ -1771,10 +1776,15 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
           <p class="meta" style="margin-top:14px">
             <span data-lang="ceremonyAt"></span> <span data-config="ceremonyTime"></span>
           </p>
-          <a class="btn magnetic" id="venueMapLink" target="_blank" rel="noopener noreferrer"
-             style="margin-top:22px;min-width:min(100%,260px)">
-            <span data-lang="venueDirections"></span>
-          </a>
+          <div class="venue-acts">
+            <a class="btn magnetic" id="venueMapLink" target="_blank" rel="noopener noreferrer">
+              <span data-lang="venuePlace"></span>
+            </a>
+            <a class="link-underline meta" id="venueDirLink" target="_blank" rel="noopener noreferrer"
+               style="color:var(--deep-sage)">
+              <span data-lang="venueDirections"></span>
+            </a>
+          </div>
         </article>
 
       </div>
@@ -1877,13 +1887,15 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     ceremonyTime:       "11:30",
     rsvpDeadline:       "20/11/2026",
     venueName:          "Nhà hàng Thiên Trang",
-    venueAddress:       "Cẩm Phả, Quảng Ninh",
+    venueAddress:       "07 Trần Phú, Cẩm Phả, Quảng Ninh",
     /* Có link Google Maps chính xác thì dán vào venueMapUrl, để trống thì tự
        dựng link tìm kiếm từ venueMapQuery. */
     venueMapQuery:      "Nhà hàng Thiên Trang, Cẩm Phả, Quảng Ninh",
-    /* Chỉ đường thẳng tới toạ độ ghim của nhà hàng — chắc ăn hơn tìm theo tên.
-       Mở được cả bằng ứng dụng Google Maps trên điện thoại lẫn trình duyệt. */
-    venueMapUrl:        "https://www.google.com/maps/dir/?api=1&destination=21.0100901%2C107.2906709",
+    /* Mở TRANG ĐỊA ĐIỂM của nhà hàng (có ảnh, tên, đánh giá) chứ không phải toạ độ
+       trần — khách nhận ra chỗ dễ hơn hẳn. cid là mã địa điểm cố định của Google. */
+    venueMapUrl:        "https://www.google.com/maps?cid=15246394687378593838",
+    /* Nút phụ: vẽ đường đi thẳng tới nơi */
+    venueDirUrl:        "https://www.google.com/maps/dir/?api=1&destination=21.0100901%2C107.2906709",
     /* Toạ độ ngay tại nhà hàng — dùng để lấy thời tiết.
        Nguồn: Open-Meteo, miễn phí, không cần khoá. */
     weather: {
@@ -2116,7 +2128,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       weatherNoteNormal: "Trung bình ngày 06/12 sáu năm gần đây tại Cẩm Phả. Dự báo thật sẽ tự hiện khi còn dưới hai tuần.",
       weatherNoteReal:   "Dự báo cho đúng ngày 06/12/2026.",
       venueTitle:        "Đường tới nhà hàng",
-      venueDirections:   "Chỉ đường trên Google Maps",
+      venuePlace:        "Xem nhà hàng trên bản đồ",
+      venueDirections:   "Chỉ đường →",
       deskQrHint:        "Quét để mở trên điện thoại",
       calCaption:        "Ngày cưới rơi vào Chủ Nhật",
       ceremonyAt:        "Đón khách lúc",
@@ -2277,7 +2290,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       weatherNoteNormal: "Average of 6 December over the last six years in Cẩm Phả. The real forecast appears within two weeks of the day.",
       weatherNoteReal:   "Forecast for 6 December 2026.",
       venueTitle:        "Getting there",
-      venueDirections:   "Directions on Google Maps",
+      venuePlace:        "See the venue on the map",
+      venueDirections:   "Directions →",
       deskQrHint:        "Scan to open on your phone",
       calCaption:        "The wedding falls on a Sunday",
       ceremonyAt:        "Guests welcomed from",
@@ -3973,13 +3987,15 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   ===================================================================== */
 
   function initVenue() {
-    const link = $("#venueMapLink");
-    if (!link) return;
-    const url = WEDDING_CONFIG.venueMapUrl ||
-      ("https://www.google.com/maps/search/?api=1&query=" +
-       encodeURIComponent(WEDDING_CONFIG.venueMapQuery ||
-         ((WEDDING_CONFIG.venueName || "") + " " + (WEDDING_CONFIG.venueAddress || ""))));
-    link.setAttribute("href", url);
+    const place = $("#venueMapLink");
+    const dir   = $("#venueDirLink");
+
+    const fallback = "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent(WEDDING_CONFIG.venueMapQuery ||
+        ((WEDDING_CONFIG.venueName || "") + " " + (WEDDING_CONFIG.venueAddress || "")));
+
+    if (place) place.setAttribute("href", WEDDING_CONFIG.venueMapUrl || fallback);
+    if (dir)   dir.setAttribute("href", WEDDING_CONFIG.venueDirUrl || fallback);
   }
 
   /** Khách đang cầm điện thoại thì quét mã làm gì — chỉ hiện trên máy tính */
