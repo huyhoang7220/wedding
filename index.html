@@ -13,7 +13,7 @@
 ========================= -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet" />
 
 <!-- =========================
      LIBRARIES (CDN)
@@ -40,7 +40,7 @@
         fontFamily: {
           display: ['"Playfair Display"', 'Georgia', 'serif'],
           sans:    ['Inter', 'system-ui', 'sans-serif'],
-          hand:    ['Caveat', 'cursive']
+          hand:    ['Dancing Script', 'cursive']
         }
       }
     }
@@ -189,7 +189,9 @@ a{color:inherit;text-decoration:none}
 /* Tên/token dài (vd. [BRIDE_NAME]) không được phép làm vỡ grid */
 .display-xl,.display-l,.display-m,.serif-lead,.tl__time{overflow-wrap:anywhere}
 .font-display{font-family:"Playfair Display",Georgia,serif}
-.font-hand{font-family:Caveat,cursive;font-weight:600}
+/* Dancing Script thay cho Caveat: Caveat KHÔNG có bộ ký tự tiếng Việt
+   nên chữ có dấu bị rụng mất dấu trên điện thoại. */
+.font-hand{font-family:'Dancing Script',cursive;font-weight:600}
 
 .eyebrow{
   font-size:clamp(11.5px,2.2vw,12.5px);
@@ -698,7 +700,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 .polaroid .img-frame{aspect-ratio:4/5}
 .polaroid__cap{
   position:absolute;left:0;right:0;bottom:20px;text-align:center;
-  font-family:Caveat,cursive;font-size:24px;font-weight:600;color:var(--ink-body);
+  font-family:'Dancing Script',cursive;font-size:23px;font-weight:600;color:var(--ink-body);
 }
 .polaroid__stamp{
   position:absolute;top:14px;right:14px;z-index:3;
@@ -855,22 +857,58 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 }
 .cal__cell--sun{color:var(--ink-45)}
 .cal__cell--empty{border-bottom-color:transparent}
-/* Ngày cưới: to hẳn lên, có vòng champagne, không tô đặc như lịch thường */
+/* Ngày cưới: to hẳn lên, quầng sáng thở, hai vòng lan ra và sao xoay quanh */
 .cal__cell--day{
   color:var(--ink-body);font-size:clamp(1.35rem,5.2vw,2.1rem);font-weight:500;
   z-index:1;
 }
-.cal__cell--day::before{
-  content:"";position:absolute;width:clamp(42px,11vw,64px);height:clamp(42px,11vw,64px);
-  border-radius:50%;border:1px solid var(--champagne);z-index:-1;
+.cal__cell--day .cal__num{position:relative;z-index:2;animation:calNum 3.6s var(--ease) infinite}
+@keyframes calNum{
+  0%,100%{text-shadow:0 0 0 rgba(200,184,154,0)}
+  50%    {text-shadow:0 0 16px rgba(200,184,154,.75)}
+}
+/* Quầng sáng mềm sau con số */
+.cal__glow{
+  position:absolute;z-index:0;width:clamp(58px,15vw,88px);height:clamp(58px,15vw,88px);
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(200,184,154,.42) 0%,rgba(200,184,154,.12) 45%,transparent 70%);
+  animation:calGlow 3.6s var(--ease) infinite;
+}
+@keyframes calGlow{
+  0%,100%{opacity:.45;transform:scale(.92)}
+  50%    {opacity:1;transform:scale(1.12)}
+}
+/* Vòng tròn viền, lan ra rồi tan — hai vòng lệch nhịp cho có chiều sâu */
+.cal__cell--day::before,.cal__cell--day::after{
+  content:"";position:absolute;z-index:1;pointer-events:none;
+  width:clamp(42px,11vw,64px);height:clamp(42px,11vw,64px);
+  border-radius:50%;border:1px solid var(--champagne);
   animation:calRing 3.6s var(--ease) infinite;
 }
-.cal__cell--day::after{
-  content:"";position:absolute;bottom:6px;width:16px;height:1px;background:var(--champagne);
-}
+.cal__cell--day::after{animation-delay:1.8s}
 @keyframes calRing{
-  0%,100%{transform:scale(1);opacity:.55}
-  50%    {transform:scale(1.09);opacity:1}
+  0%  {transform:scale(.86);opacity:0}
+  25% {opacity:.9}
+  100%{transform:scale(1.55);opacity:0}
+}
+/* Ba ngôi sao xoay quanh ngày cưới */
+.cal__orbit{
+  position:absolute;z-index:2;pointer-events:none;
+  width:clamp(52px,13vw,76px);height:clamp(52px,13vw,76px);
+  animation:calOrbit 12s linear infinite;
+}
+.cal__orbit i{
+  position:absolute;width:6px;height:6px;margin:-3px;border-radius:50%;
+  background:var(--champagne);
+  animation:calTwinkle 2.4s var(--ease) infinite;
+}
+.cal__orbit i:nth-child(1){top:0;left:50%;animation-delay:0s}
+.cal__orbit i:nth-child(2){top:50%;left:100%;animation-delay:.8s}
+.cal__orbit i:nth-child(3){top:100%;left:20%;animation-delay:1.6s}
+@keyframes calOrbit{to{transform:rotate(360deg)}}
+@keyframes calTwinkle{
+  0%,100%{opacity:.18;transform:scale(.55)}
+  50%    {opacity:1;transform:scale(1.15)}
 }
 .cal__note{margin-top:clamp(14px,2.5vw,20px);text-align:right}
 /* Màn rộng: ô vuông sẽ cao lênh khênh, cắt bớt cho lịch gọn lại */
@@ -889,6 +927,43 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
   font-size:clamp(1.7rem,6vw,2.5rem);color:var(--ink-body);
 }
 .weather__note{margin-top:16px;color:var(--ink-30);max-width:44ch}
+
+/* ===== Bụi sao trôi rất chậm sau nội dung ===== */
+.stardust{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.stardust i{
+  position:absolute;left:var(--x);top:var(--y);
+  width:var(--s,4px);height:var(--s,4px);border-radius:50%;
+  background:var(--champagne);opacity:0;
+  animation:dust var(--d,14s) linear infinite;animation-delay:var(--dl,0s);
+}
+@keyframes dust{
+  0%  {opacity:0;transform:translateY(14px) scale(.5)}
+  18% {opacity:.75}
+  70% {opacity:.35}
+  100%{opacity:0;transform:translateY(-46px) scale(1.05)}
+}
+.section{position:relative}
+.section > .shell{position:relative;z-index:1}
+
+/* ===== Thẻ nhấc nhẹ khi rê chuột (chỉ máy tính) ===== */
+@media (hover:hover) and (pointer:fine){
+  .plan-card,.gift-card{transition:transform .6s var(--ease),border-color .6s var(--ease)}
+  .plan-card:hover{transform:translateY(-4px);border-top-color:var(--champagne)}
+  .gift-card:hover{transform:translateY(-4px)}
+}
+
+/* ===== Gạch champagne kéo dài ra dưới nhãn mục ===== */
+.eyebrow--sage{position:relative;display:inline-block}
+.eyebrow--sage::after{
+  content:"";position:absolute;left:0;bottom:-7px;height:1px;width:0;
+  background:var(--champagne);transition:width 1.4s var(--ease) .35s;
+}
+.rv-in .eyebrow--sage::after,.eyebrow--sage.rv-in::after{width:100%}
+
+@media (prefers-reduced-motion:reduce){
+  .stardust{display:none}
+  .eyebrow--sage::after{transition:none;width:100%}
+}
 
 /* ===== Mã QR mở trên điện thoại — chỉ máy tính mới thấy ===== */
 .desk-qr{
@@ -918,7 +993,8 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
 }
 @media (prefers-reduced-motion:reduce){
   .desk-qr{animation:none}
-  .cal__cell--day::before{animation:none;opacity:.9}
+  .cal__cell--day::before,.cal__cell--day::after{animation:none;opacity:.75;transform:none}
+  .cal__glow,.cal__orbit,.cal__orbit i,.cal__cell--day .cal__num{animation:none}
 }
 
 /* Số tài khoản cũng giấu cùng mã QR, mở bằng đúng một cú chạm.
@@ -1805,10 +1881,13 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     /* Có link Google Maps chính xác thì dán vào venueMapUrl, để trống thì tự
        dựng link tìm kiếm từ venueMapQuery. */
     venueMapQuery:      "Nhà hàng Thiên Trang, Cẩm Phả, Quảng Ninh",
-    venueMapUrl:        "",
-    /* Toạ độ Cẩm Phả — dùng để lấy thời tiết. Nguồn: Open-Meteo, miễn phí, không cần khoá. */
+    /* Chỉ đường thẳng tới toạ độ ghim của nhà hàng — chắc ăn hơn tìm theo tên.
+       Mở được cả bằng ứng dụng Google Maps trên điện thoại lẫn trình duyệt. */
+    venueMapUrl:        "https://www.google.com/maps/dir/?api=1&destination=21.0100901%2C107.2906709",
+    /* Toạ độ ngay tại nhà hàng — dùng để lấy thời tiết.
+       Nguồn: Open-Meteo, miễn phí, không cần khoá. */
     weather: {
-      lat: 21.0167, lon: 107.3, tz: "Asia/Bangkok",
+      lat: 21.0101, lon: 107.2907, tz: "Asia/Bangkok",
       years: [2020, 2021, 2022, 2023, 2024, 2025]
     },
     filmStamp:          "06 · 12 · 26",
@@ -3655,6 +3734,32 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
      16 — LẤP LÁNH QUANH NÚT
   ===================================================================== */
 
+  /** Rắc vài hạt bụi sao trôi rất chậm sau nội dung — ít thôi cho khỏi rối và khỏi nặng máy */
+  function initStardust() {
+    if (prefersReducedMotion()) return;
+    const spots = ["#plan", "#gift", "#memorySection", "#countdown"]
+      .map((sel) => $(sel))
+      .filter(Boolean);
+
+    spots.forEach((section) => {
+      if (section.querySelector(".stardust")) return;
+      const layer = document.createElement("div");
+      layer.className = "stardust";
+      layer.setAttribute("aria-hidden", "true");
+
+      for (let i = 0; i < 7; i += 1) {
+        const dot = document.createElement("i");
+        dot.style.setProperty("--x", (5 + Math.random() * 90).toFixed(1) + "%");
+        dot.style.setProperty("--y", (10 + Math.random() * 80).toFixed(1) + "%");
+        dot.style.setProperty("--s", (2 + Math.random() * 3).toFixed(1) + "px");
+        dot.style.setProperty("--d", (12 + Math.random() * 10).toFixed(1) + "s");
+        dot.style.setProperty("--dl", (Math.random() * 9).toFixed(1) + "s");
+        layer.appendChild(dot);
+      }
+      section.insertBefore(layer, section.firstChild);
+    });
+  }
+
   function initSparkles() {
     $$(".btn, .copy-chip").forEach((el) => {
       if (el.querySelector(".spark")) return;
@@ -3715,8 +3820,29 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
       const cell = document.createElement("span");
       cell.className = "cal__cell";
       if (new Date(year, month, d).getDay() === 0) cell.classList.add("cal__cell--sun");
-      if (d === mark) cell.classList.add("cal__cell--day");
-      cell.textContent = String(d);
+
+      if (d === mark) {
+        cell.classList.add("cal__cell--day");
+        /* Ngày cưới có thêm quầng sáng và ba ngôi sao xoay quanh */
+        const glow = document.createElement("span");
+        glow.className = "cal__glow";
+        glow.setAttribute("aria-hidden", "true");
+
+        const orbit = document.createElement("span");
+        orbit.className = "cal__orbit";
+        orbit.setAttribute("aria-hidden", "true");
+        orbit.innerHTML = "<i></i><i></i><i></i>";
+
+        const num = document.createElement("span");
+        num.className = "cal__num";
+        num.textContent = String(d);
+
+        cell.appendChild(glow);
+        cell.appendChild(orbit);
+        cell.appendChild(num);
+      } else {
+        cell.textContent = String(d);
+      }
       grid.appendChild(cell);
     }
 
@@ -3912,6 +4038,7 @@ input:-webkit-autofill{-webkit-text-fill-color:var(--charcoal);transition:backgr
     buildCalendar();
     loadWeather();
     initSparkles();
+    initStardust();
     syncHeaderHeight();
     initCursor();
     initMagnetic();
